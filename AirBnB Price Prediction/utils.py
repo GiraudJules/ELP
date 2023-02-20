@@ -9,7 +9,7 @@ def preprocessing(df, to_drop = ['id','host_name','last_review', 'name', 'host_i
     The purpose of this function is to preprocess our data. We drop columns that could induce suprious correlations 
     between the data and output, we split numerical and categorical features and perform one-hot-encoding on 
     categorical features. We remove the price from numercial features and save it as our target, y. 
-
+git
     Input:
         - A dataframe containing the data
         - A list of columns to drop. If not specified, the columns 'id','host_name','last_review', 'name', 'host_id' will be dropped.
@@ -19,6 +19,7 @@ def preprocessing(df, to_drop = ['id','host_name','last_review', 'name', 'host_i
         - Training data and the associated labels
         - Test data and the associated labels
     '''
+    
     # Dropping unused features and filling 
     df['reviews_per_month'] = df['reviews_per_month'].fillna(0)
     df.drop(to_drop, axis=1, inplace=True)
