@@ -2,6 +2,7 @@ from sklearn.model_selection import train_test_split, KFold, cross_validate
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import scale, StandardScaler, RobustScaler, OneHotEncoder
+import matplotlib.pyplot as plt
 
 
 def preprocessing(df, to_drop = ['id','host_name','last_review', 'name', 'host_id'], train_test_split=0.2):
@@ -19,7 +20,6 @@ git
         - Training data and the associated labels
         - Test data and the associated labels
     '''
-    
     # Dropping unused features and filling 
     df['reviews_per_month'] = df['reviews_per_month'].fillna(0)
     df.drop(to_drop, axis=1, inplace=True)
@@ -112,3 +112,18 @@ def eval(model, X_train, y_train, numerical_features, n_folds=5, scores = ['r2',
     print_score_dict(sc)
     
     return sc
+
+def scatter_plot(model_name, y_test, y_pred):
+    '''
+    The purpose of the function is to make a scatter plot to compare the ground truth y values and the predicted y values for a given model.
+    Input:
+        - The name of the model we are analysing 
+        - The ground truth output values (y_test)
+        - The predicted output values made by the model (y_pred)
+    '''
+
+    plt.scatter(x=y_test, y=y_pred, alpha=0.1)
+    plt.title('Scatter plot on test set for {} model'.format(model_name))
+    plt.xlabel('Ground truth y values')
+    plt.ylabel('Predicted y values')
+    plt.show()
