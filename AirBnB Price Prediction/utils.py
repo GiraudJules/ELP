@@ -1,11 +1,12 @@
 from sklearn.model_selection import train_test_split, KFold, cross_validate
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import scale, StandardScaler, RobustScaler, OneHotEncoder
+from sklearn.preprocessing import RobustScaler
 import matplotlib.pyplot as plt
+from sklearn.model_selection import  GridSearchCV
 
 
-def preprocessing(df, to_drop = ['id','host_name','last_review', 'name', 'host_id'], train_test_split=0.2):
+def preprocessing(df, to_drop = ['id','host_name','last_review', 'name', 'host_id'], test_size=0.2):
     '''
     The purpose of this function is to preprocess our data. We drop columns that could induce suprious correlations 
     between the data and output, we split numerical and categorical features and perform one-hot-encoding on 
@@ -37,7 +38,7 @@ git
     X = np.concatenate((numerical_features, categorical_features_one_hot), axis=1)
 
     # Splitting our data into train and test sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=train_test_split, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
     # Normalizing our data with a RobustScaler, which is resistant to outliers
     scaler = RobustScaler()
@@ -45,6 +46,7 @@ git
     X_test = scaler.fit_transform(X_test)
 
     return X_train, X_test, y_train, y_test
+
 
 
 def print_score(scores, sc):
@@ -84,7 +86,7 @@ def print_score_dict(score_dict):
         
 
 
-def eval(model, X_train, y_train, numerical_features, n_folds=5, scores = ['r2', 'neg_mean_absolute_error', 'neg_root_mean_squared_error']):
+def eval(model, X_train, y_train, n_folds=5, scores = ['r2', 'neg_mean_absolute_error', 'neg_root_mean_squared_error']):
     '''
     The purpose of the function is to evaluate the performance of our model on the train and test sets. 
     Input:
@@ -100,7 +102,7 @@ def eval(model, X_train, y_train, numerical_features, n_folds=5, scores = ['r2',
     '''
 
     # Initialize the K-Fold cross-validation. By default, there will be 5 folds.
-    kf = KFold(n_folds, shuffle=True, random_state = 91).get_n_splits(numerical_features)
+    kf = KFold(n_folds, shuffle=True, random_state = 91)
 
     # Cross-validate the model over 5 folds. 
     sc = cross_validate(model, X_train, y_train, scoring=scores, return_train_score=True, cv=kf)
@@ -113,17 +115,6 @@ def eval(model, X_train, y_train, numerical_features, n_folds=5, scores = ['r2',
     
     return sc
 
-def scatter_plot(model_name, y_test, y_pred):
-    '''
-    The purpose of the function is to make a scatter plot to compare the ground truth y values and the predicted y values for a given model.
-    Input:
-        - The name of the model we are analysing 
-        - The ground truth output values (y_test)
-        - The predicted output values made by the model (y_pred)
-    '''
 
-    plt.scatter(x=y_test, y=y_pred, alpha=0.1)
-    plt.title('Scatter plot on test set for {} model'.format(model_name))
-    plt.xlabel('Ground truth y values')
-    plt.ylabel('Predicted y values')
-    plt.show()
+
+
