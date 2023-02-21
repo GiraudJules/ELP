@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
-from utils import splits, eval 
+from utils import splits, search_parameters, eval 
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor
 
 
 
@@ -10,7 +10,7 @@ from sklearn.ensemble import RandomForestRegressor
 #                                    Decision Tree                                       #
 #----------------------------------------------------------------------------------------#
 
-def create_a_decision_tree(X, y, params=None, metrics=None):
+def create_a_decision_tree(X, y, grid_search=False, params=None, metrics=None, verbose=1):
     '''
     This function creates and evaluate a decision tree. Optionally, we can perform a GridSearch to 
     obtain the best parameters or given specific parameters for our tree.
@@ -26,9 +26,22 @@ def create_a_decision_tree(X, y, params=None, metrics=None):
         - y_test: the labels associated to the test set
         - y_pred: the predicted values on a test set
     '''
-    _, _, X_test, y_test = splits(X, y)
 
-    if params == None:
+    X_train, y_train, X_test, y_test = splits(X, y)
+
+    if grid_search == True:
+        # Find best parameters with GridSearch Function, and evaluate
+        dt_params = {'criterion': ['poisson', 'absolute_error', 'squared_error', 'friedman_mse'], 
+                    'min_samples_split':[2,5,10,25],
+                    'min_samples_leaf':[2,5,10,25],
+                    'max_depth':[2,5,10,25,50,75,100,150]
+                    }
+
+        # Obtain best parameters from grid search function
+        dt_best_params = search_parameters(DecisionTreeRegressor(), dt_params, X_train, y_train, verbose=verbose)
+        decision_tree = DecisionTreeRegressor(**dt_best_params)
+        
+    elif params == None:
         # If no parameters are given create a default decision tree
         decision_tree = DecisionTreeRegressor()
 
@@ -50,7 +63,7 @@ def create_a_decision_tree(X, y, params=None, metrics=None):
 #                                      Random Forest                                     #
 #----------------------------------------------------------------------------------------#
 
-def create_a_random_forest(X, y,  params=None, metrics=None):
+def create_a_random_forest(X, y, grid_search=False, params=None, metrics=None, verbose=1):
     '''
     This function creates and evaluate a Random Forest. Optionally, we can perform a GridSearch to 
     obtain the best parameters or given specific parameters for our forest.
@@ -66,9 +79,24 @@ def create_a_random_forest(X, y,  params=None, metrics=None):
         - y_test: the labels associated to the test set
         - y_pred: the predicted values on a test set
     '''
-    _, _, X_test, y_test = splits(X, y)
 
-    if params == None:
+    X_train, y_train, X_test, y_test = splits(X, y)
+
+    if grid_search == True:
+        # Create a Random Forest, find best parameters with GridSearch Function, and evaluate
+        rf_params = {'criterion': ['poisson', 'absolute_error', 'squared_error', 'friedman_mse'],
+            'n_estimators': [5,25,50,75,100,500], 
+            'min_samples_split':[2,5,10,25],
+            'min_samples_leaf':[2,5,10,25],
+            'max_depth':[2,5,10,25,50,75,100,150],
+            'oob_score': [True, False]
+            }
+
+        # Obtain best parameters from grid search function
+        rf_best_params = search_parameters(RandomForestRegressor(), rf_params, X_train, y_train, verbose=verbose)
+        random_forest_best = RandomForestRegressor(**rf_best_params)
+        
+    elif params == None:
         # If no parameters are given create a default Random Forest
         random_forest = RandomForestRegressor()
 
@@ -85,3 +113,4 @@ def create_a_random_forest(X, y,  params=None, metrics=None):
     y_pred = random_forest.predict(X_test)
 
     return random_forest, y_test, y_pred
+

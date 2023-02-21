@@ -15,12 +15,11 @@ def preprocessing(df, to_drop = ['id','host_name','last_review', 'name', 'host_i
     We split our data into train and test sets with associated labels, and finally we scale them.
 
     Input:
-        - A dataframe containing the data
-        - A list of columns to drop. If not specified, the columns 'id','host_name','last_review', 'name', 'host_id' will be dropped.
-        - A number between 0 and 1 representing the size of the test set. If not specified, it will be 0.2. 
+        - df: a dataframe containing the data
+        - to_drop: a list of columns to drop. If not specified, the columns 'id','host_name','last_review', 'name', 'host_id' will be dropped. 
 
     Output:
-        - Data and the associated labels
+        - X, y: Data and the associated labels
     '''
     # Dropping unused features and filling 
     df['reviews_per_month'] = df['reviews_per_month'].fillna(0)
@@ -48,7 +47,10 @@ def splits(X,y, test_size=0.2):
     Inputs:
         - X: the data
         - y: the associated labels
-        - 
+        - test_size: a float between 0 and 1 representing the size of the test set. If not specified, it will be 0.2.
+    Outpust:
+        - X_train, y_train: training data and the associated labels
+        - X_test, y_test: test data and the associated labels
     '''
     # Splitting our data into train and test sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
@@ -60,6 +62,22 @@ def splits(X,y, test_size=0.2):
 
     return X_train, X_test, y_train, y_test
 
+def search_parameters(model, parameters, X_train, y_train):
+    '''
+    The purpose of this function is to find optimal paramters for a bagging model using GridSearchCV.
+
+    Input:
+        - model: a bagging model
+        - parameters: a dictionnary of all the parameters we want to investigate
+        - X_train: training data
+        - y_train: the labels associated to the data
+    Output:
+        - best_params: the best parameters found by GridSearchCV. 
+    '''
+    grid = GridSearchCV(model, parameters)
+    grid.fit(X_train,y_train)
+    best_params = grid.best_params_
+    return best_params
 
 def print_score(scores, sc):
     '''
@@ -101,15 +119,14 @@ def eval(model, X, y, n_folds=5, scores = ['r2', 'neg_mean_absolute_error', 'neg
     '''
     The purpose of the function is to evaluate and display the performance of our model on the train and test sets. 
     Input:
-        - An initialized model
-        - Training data and the associated labels
-        - The numerical features of the data, excluding the variable we are looking to predict
-        - The number of folds for the K-Fold cross validation. If no number is specified, the default is 5.
-        - A list of metrics we want to looks at. If none are specified by the user, these will be 
+        - model: An initialized model
+        - X, y: Training data and the associated labels
+        - n_folds: The number of folds for the K-Fold cross validation. If no number is specified, the default is 5.
+        - scores: A list of metrics we want to looks at. If none are specified by the user, these will be 
           the R2 score, the mean absolute error and the root mean squared error. 
 
     Output:
-        - A dictionnary containing the training and test score for all metrics given as input on the given model.
+        - sc: A dictionnary containing the training and test score for all metrics given as input on the given model.
     '''
 
     # Initialize the K-Fold cross-validation. By default, there will be 5 folds.
