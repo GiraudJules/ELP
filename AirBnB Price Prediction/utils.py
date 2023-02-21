@@ -10,8 +10,10 @@ def preprocessing(df, to_drop = ['id','host_name','last_review', 'name', 'host_i
     '''
     The purpose of this function is to preprocess our data. We drop columns that could induce suprious correlations 
     between the data and output, we split numerical and categorical features and perform one-hot-encoding on 
-    categorical features. We remove the price from numercial features and save it as our target, y. 
-git
+    categorical features. We remove the price from numercial features and save it as our target, y. We then concatenate 
+    the numercial and categorical features to obtain data that can be used for training and testing. 
+    We split our data into train and test sets with associated labels, and finally we scale them.
+
     Input:
         - A dataframe containing the data
         - A list of columns to drop. If not specified, the columns 'id','host_name','last_review', 'name', 'host_id' will be dropped.
@@ -88,7 +90,7 @@ def print_score_dict(score_dict):
 
 def eval(model, X_train, y_train, n_folds=5, scores = ['r2', 'neg_mean_absolute_error', 'neg_root_mean_squared_error']):
     '''
-    The purpose of the function is to evaluate the performance of our model on the train and test sets. 
+    The purpose of the function is to evaluate and display the performance of our model on the train and test sets. 
     Input:
         - An initialized model
         - Training data and the associated labels
@@ -108,7 +110,7 @@ def eval(model, X_train, y_train, n_folds=5, scores = ['r2', 'neg_mean_absolute_
     sc = cross_validate(model, X_train, y_train, scoring=scores, return_train_score=True, cv=kf)
 
     # Print the scores
-    print('Average run time for {} folds on a {}: {:.5f} +/- {:5f}'.format(n_folds, model, -sc['fit_time'].mean(), sc['fit_time'].std()))
+    print('Average run time for {} folds on a {}: {:.5f} +/- {:5f}'.format(n_folds, model, abs(sc['fit_time'].mean()), abs(sc['fit_time'].std())))
     print('-'*60)
 
     print_score_dict(sc)
