@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from utils import eval 
+from utils import splits, eval 
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 
@@ -10,7 +10,7 @@ from sklearn.ensemble import RandomForestRegressor
 #                                    Decision Tree                                       #
 #----------------------------------------------------------------------------------------#
 
-def create_a_decision_tree(X, y, params=None, metrics = None):
+def create_a_decision_tree(X, y, params=None, metrics=None):
     '''
     This function creates and evaluate a decision tree. Optionally, we can perform a GridSearch to 
     obtain the best parameters or given specific parameters for our tree.
@@ -22,8 +22,11 @@ def create_a_decision_tree(X, y, params=None, metrics = None):
         - metrics: a list of metrics to be used for the evaluation of our model.
 
     Output:
-        - A dictonnary containing the performance of our decision tree over different metrics 
+        - decision_tree: the created decision tree, 
+        - y_test: the labels associated to the test set
+        - y_pred: the predicted values on a test set
     '''
+    _, _, X_test, y_test = splits(X, y)
 
     if params == None:
         # If no parameters are given create a default decision tree
@@ -39,14 +42,15 @@ def create_a_decision_tree(X, y, params=None, metrics = None):
     else: 
         decision_tree_scores = eval(decision_tree, X, y, scores=metrics)
 
-    return decision_tree_scores
-
+    y_pred = decision_tree.predict(X_test)
+        
+    return decision_tree, y_test, y_pred
 
 #----------------------------------------------------------------------------------------#
 #                                      Random Forest                                     #
 #----------------------------------------------------------------------------------------#
 
-def create_a_random_forest(X, y, params=None, metrics=None):
+def create_a_random_forest(X, y,  params=None, metrics=None):
     '''
     This function creates and evaluate a Random Forest. Optionally, we can perform a GridSearch to 
     obtain the best parameters or given specific parameters for our forest.
@@ -58,8 +62,11 @@ def create_a_random_forest(X, y, params=None, metrics=None):
         - metrics: a list of metrics to be used for the evaluation of our model.
 
     Output:
-        - A dictonnary containing the performance of our random forest over different metrics 
+        - random_forest: the created random forest, 
+        - y_test: the labels associated to the test set
+        - y_pred: the predicted values on a test set
     '''
+    _, _, X_test, y_test = splits(X, y)
 
     if params == None:
         # If no parameters are given create a default Random Forest
@@ -75,4 +82,6 @@ def create_a_random_forest(X, y, params=None, metrics=None):
     else:
         random_forest_scores = eval(random_forest, X, y, scores=metrics)
 
-    return random_forest_scores
+    y_pred = random_forest.predict(X_test)
+
+    return random_forest, y_test, y_pred
