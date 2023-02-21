@@ -1,9 +1,7 @@
 import numpy as np
 import pandas as pd
-from utils import preprocessing, eval #search_parameters_bagging,
-from sklearn.ensemble import RandomForestRegressor
+from utils import eval 
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.model_selection import  GridSearchCV
 
 
 #----------------------------------------------------------------------------------------#
