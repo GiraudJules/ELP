@@ -1,5 +1,5 @@
 #####################
-#This Python file contains helper functions to be used to visualize the predictions and performances of trained models.
+#This Python file contains helper functions to be used to visualize the predictions and performances of trained models. 
 ######################
 
 import matplotlib.pyplot as plt
