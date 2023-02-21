@@ -1,9 +1,5 @@
 #####################
-<<<<<<< HEAD
 #This Python file contains helper functions to be used to visualize the predictions and performances of trained models. 
-=======
-#This Python file contains helper functions to be used to visualize the predictions and performances of trained models.
->>>>>>> 3d8f9a6 (File containing plots for evaluation)
 ######################
 
 import matplotlib.pyplot as plt
@@ -12,11 +8,7 @@ import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
 
-<<<<<<< HEAD
-#SCATTER PLOT FUNCTION 
-=======
 #SCATTER PLOT FUNCTION
->>>>>>> 3d8f9a6 (File containing plots for evaluation)
 def scatter_plot(model_name, y_test, y_pred):
     '''
     The purpose of the function is to make a scatter plot to compare the ground truth y values and the predicted y values for a given model.
