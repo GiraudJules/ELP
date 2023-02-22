@@ -219,7 +219,7 @@ def create_an_extremely_randomized_forest(X, y, grid_search=False, params=None, 
     else:
         # Creating a Random Forest with a given parameter dictionnary
         extra_random_forest = ExtraTreesRegressor(**params)
-
+ 
     # Evaluating performance 
     if metrics==None:
         extra_random_forest_scores = eval(extra_random_forest, X, y)
