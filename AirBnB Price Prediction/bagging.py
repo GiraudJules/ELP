@@ -182,7 +182,7 @@ def create_an_extremely_randomized_forest(X, y, grid_search=False, params=None, 
 def create_an_extremely_randomized_forest(X, y, grid_search=False, params=None, metrics=None, verbose=1):
     '''
     This function creates and evaluate an extremely randomized Random Forest. Optionally, we can 
-    perform a GridSearch to obtain the best parameters or given specific parameters for our forest.
+    perform a GridSearch to obtain the best parameters or given specific parameters for our forest. 
 
     Input: 
         - X: our data
