@@ -59,6 +59,7 @@ def create_a_decision_tree(X, y, grid_search=False, params=None, metrics=None, v
     else: 
         decision_tree_scores = eval(decision_tree, X, y, scores=metrics)
 
+    decision_tree.fit(X_train, y_train)
     y_pred = decision_tree.predict(X_test)
         
     return decision_tree, y_test, y_pred
@@ -114,6 +115,7 @@ def create_a_random_forest(X, y, grid_search=False, params=None, metrics=None, v
     else:
         random_forest_scores = eval(random_forest, X, y, scores=metrics)
 
+    random_forest.fit(X_train, y_train)
     y_pred = random_forest.predict(X_test)
 
     return random_forest, y_test, y_pred
@@ -226,6 +228,7 @@ def create_an_extremely_randomized_forest(X, y, grid_search=False, params=None, 
     else:
         extra_random_forest_scores = eval(extra_random_forest, X, y, scores=metrics)
 
+    extra_random_forest.fit(X_train, y_train)
     y_pred = extra_random_forest.predict(X_test) 
 
     return extra_random_forest, y_test, y_pred

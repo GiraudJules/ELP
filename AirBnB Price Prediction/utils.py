@@ -1,9 +1,12 @@
-from sklearn.model_selection import train_test_split, KFold, cross_validate
-import pandas as pd
+'''
+A python file containing helpers functions for data preprocessing and model evaluation.
+Author: Marie Bouvard
+'''
 import numpy as np
+import pandas as pd
 from sklearn.preprocessing import RobustScaler
-import matplotlib.pyplot as plt
 from sklearn.model_selection import  GridSearchCV
+from sklearn.model_selection import train_test_split, KFold, cross_validate
 
 
 def preprocessing(df, to_drop = ['id','host_name','last_review', 'name', 'host_id']):
