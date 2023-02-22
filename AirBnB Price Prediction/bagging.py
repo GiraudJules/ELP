@@ -31,7 +31,7 @@ def create_a_decision_tree(X, y, grid_search=False, params=None, metrics=None, v
         - y_pred: the predicted values on a test set
     '''
 
-    X_train, y_train, X_test, y_test = splits(X, y)
+    X_train, X_test, y_train, y_test = splits(X, y)
 
     if grid_search == True:
         # Find best parameters with GridSearch Function, and evaluate
@@ -53,14 +53,14 @@ def create_a_decision_tree(X, y, grid_search=False, params=None, metrics=None, v
         # Creating a decision tree with a given parameter dictionnary
         decision_tree = DecisionTreeRegressor(**params)
 
+    decision_tree.fit(X_train, y_train)
+    y_pred = decision_tree.predict(X_test)
+
     # Evaluating performance 
     if metrics == None:
         decision_tree_scores = eval(decision_tree, X, y)
     else: 
         decision_tree_scores = eval(decision_tree, X, y, scores=metrics)
-
-    decision_tree.fit(X_train, y_train)
-    y_pred = decision_tree.predict(X_test)
         
     return decision_tree, y_test, y_pred
 
@@ -85,7 +85,7 @@ def create_a_random_forest(X, y, grid_search=False, params=None, metrics=None, v
         - y_pred: the predicted values on a test set
     '''
 
-    X_train, y_train, X_test, y_test = splits(X, y)
+    X_train, X_test, y_train, y_test = splits(X, y)
 
     if grid_search == True:
         # Create a Random Forest, find best parameters with GridSearch Function, and evaluate
@@ -142,7 +142,7 @@ def create_an_extremely_randomized_forest(X, y, grid_search=False, params=None, 
         - y_pred: the predicted values on a test set
     '''
 
-    X_train, y_train, X_test, y_test = splits(X, y)
+    X_train, X_test, y_train, y_test = splits(X, y)
 
     if grid_search == True:
         # Create a Random Forest, find best parameters with GridSearch Function, and evaluate
