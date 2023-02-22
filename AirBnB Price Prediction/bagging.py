@@ -193,7 +193,7 @@ def create_an_extremely_randomized_forest(X, y, grid_search=False, params=None, 
     Output:
         - extra_random_forest: the created extremely random forest, 
         - y_test: the labels associated to the test set
-        - y_pred: the predicted values on a test set
+        - y_pred: the predicted values on a test set 
     '''
 
     X_train, y_train, X_test, y_test = splits(X, y)
