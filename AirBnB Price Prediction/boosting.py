@@ -1,5 +1,6 @@
 #####################
 #This Python file contains helper functions to be used to create Boosting models.
+#Author: Amandine Allmang
 ######################
 
 import numpy as np
@@ -30,7 +31,7 @@ def create_xgboost(X, y, grid_search=False, params=None, metrics=None):
     '''
 
     #creating training and test sets using split helper function
-    X_train, y_train, X_test, y_test = splits(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = splits(X, y, test_size=0.2)
 
     #CREATING MODEL:
     #Option 1: if grid_search = True is passed: launch a grid search
@@ -56,10 +57,6 @@ def create_xgboost(X, y, grid_search=False, params=None, metrics=None):
     else:
         #initialise model with given parameters
         xgb_reg = XGBRegressor(**params)
-    
-
-    #PREDICTIONS:
-    y_pred = xgb_reg.predict(X_test)
 
 
     #MODEL EVALUATION: using eval() helper function
@@ -68,6 +65,12 @@ def create_xgboost(X, y, grid_search=False, params=None, metrics=None):
     else:
         xgb_scores = eval(xgb_reg, X, y, scores=metrics)
     
+    #FITTING MODEL:
+    xgb_reg.fit(X_train, y_train)
+
+    #PREDICTIONS:
+    y_pred = xgb_reg.predict(X_test)
+
     return xgb_reg, y_test, y_pred
 
 
@@ -91,7 +94,7 @@ def create_adaboost(X, y, grid_search=False, params=None, metrics=None):
     '''
 
     #creating training and test sets using split helper function
-    X_train, y_train, X_test, y_test = splits(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = splits(X, y, test_size=0.2)
 
     #CREATING MODEL:
     #Option 1: if grid_search = True is passed: launch a grid search
@@ -115,9 +118,6 @@ def create_adaboost(X, y, grid_search=False, params=None, metrics=None):
     else:
         #initialise model with given parameters
         ada_reg = AdaBoostRegressor(**params)
-    
-    #PREDICTIONS:
-    y_pred = ada_reg.predict(X_test)
 
 
     #MODEL EVALUATION: using eval() helper function
@@ -126,4 +126,10 @@ def create_adaboost(X, y, grid_search=False, params=None, metrics=None):
     else:
         ada_scores = eval(ada_reg, X, y, scores=metrics)
     
+    #FITTING MODEL:
+    ada_reg.fit(X_train, y_train)
+
+    #PREDICTIONS:
+    y_pred = ada_reg.predict(X_test)
+
     return ada_reg, y_test, y_pred
