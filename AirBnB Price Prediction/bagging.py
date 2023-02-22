@@ -198,7 +198,7 @@ def create_an_extremely_randomized_forest(X, y, grid_search=False, params=None, 
         - y_pred: the predicted values on a test set 
     '''
 
-    X_train, y_train, X_test, y_test = splits(X, y)
+    X_train, X_test, y_train, y_test = splits(X, y)
 
     if grid_search == True:
         # Create a Random Forest, find best parameters with GridSearch Function, and evaluate
