@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from utils import eval 
 from xgboost import XGBRegressor
-from sklearn.ensemble import AdaBoostRegressor 
+from sklearn.ensemble import AdaBoostRegressor, GradientBoostingRegressor
 from utils import search_parameters, splits, eval
 
 
@@ -133,3 +133,67 @@ def create_adaboost(X, y, grid_search=False, params=None, metrics=None):
     y_pred = ada_reg.predict(X_test)
 
     return ada_reg, y_test, y_pred
+
+
+#----------------------------------------------------------------------------------------#
+#                              Gradient Boosting Regressor                               #
+#----------------------------------------------------------------------------------------#
+
+def create_gradboost(X, y, grid_search=False, params=None, metrics=None):
+    '''
+    This function allows to create, evaluate and make predictions a Gradient Boosting model for a regression task.
+    Input:
+        - Input data
+        - Output labels
+        - Boolean to indicate whether or not to perform a GridSearchCV
+        - Dictionary of parameters to be used to initialized a model
+        - List of metrics to be passed as input in the evaluation helper function
+    Output:
+        - Fitted model
+        - Test output labels
+        - Prediction labels made by fitted model 
+    '''
+
+    #creating training and test sets using split helper function
+    X_train, X_test, y_train, y_test = splits(X, y, test_size=0.2)
+
+    #CREATING MODEL:
+    #Option 1: if grid_search = True is passed: launch a grid search
+    if grid_search == True:
+        #initializing a XGBRegressor model
+        grad_init = GradientBoostingRegressor()
+        #dictionary of parameters to test
+        gradboost_params = {'learning_rate': [0.1, 0.01],
+                            'n_estimators': [50, 100, 150],
+                            'min_samples_leaf': [1,2,3,5],
+                            'min_samples_split': [2,3,5],
+                            'max_depth': [3,5,7]
+                            }
+        #using helper function to launch grid search
+        grad_best_params = search_parameters(grad_init, gradboost_params, X_train, y_train)
+        #initializing an GradientBoostingRegressor with the best parameters found
+        grad_reg = GradientBoostingRegressor(**grad_best_params)
+    
+    #Option 2: if no parameters are given, initialize a model with default parameters
+    elif params == None:
+        grad_reg = GradientBoostingRegressor()
+    
+    #Option 3: if parameters are given and no GridSearch is required, initialize a model with the given parameters
+    else:
+        #initialise model with given parameters
+        grad_reg = GradientBoostingRegressor(**params)
+
+
+    #MODEL EVALUATION: using eval() helper function
+    if metrics == None:
+        grad_scores = eval(grad_reg, X, y)
+    else:
+        grad_scores = eval(grad_reg, X, y, scores=metrics)
+    
+    #FITTING MDOEL
+    grad_reg.fit(X_train, y_train)
+    
+    #PREDICTIONS:
+    y_pred = grad_reg.predict(X_test)
+
+    return grad_reg, y_test, y_pred
