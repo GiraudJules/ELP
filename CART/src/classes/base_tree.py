@@ -78,7 +78,6 @@ class BaseTree:
         self,
         X_features: np.array,
         y_features: np.array,
-        splitting_point_index: int,
         splitting_point: float,
     ) -> Dict[str("left") : List[list, list], str("right") : List[list, list]]:
         """
