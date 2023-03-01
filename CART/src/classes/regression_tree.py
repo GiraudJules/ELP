@@ -8,7 +8,7 @@ class RegressionTree(BaseTree):
         super().__init__(self)
         self.risk_function = self.risk_regression()
 
-    def mse(self, y: Union[np.array, List]) -> float:
+    def mse(self, y: Union[np.array, List]) -> np.float64:
         """Compute Mean Square Error from the average of a given region R
 
         Args:
@@ -21,7 +21,7 @@ class RegressionTree(BaseTree):
         mse = np.square(y - y_mean).mean()
         return mse
     
-    def risk_regression(self, child: dict) -> float:
+    def risk_regression(self, child: dict) -> np.float64:
         """Compute the risk function for the regression from the two regions 
 
         Args:
