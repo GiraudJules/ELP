@@ -7,7 +7,7 @@ from base_tree import BaseTree
 from node import Node
 
 class ClassificationTree(BaseTree):
-    def __init__(self, min_gini, ) -> None:
+    def __init__(self, min_gini) -> None:
         super().__init__()
         self.min_gini = min_gini
 
@@ -55,6 +55,14 @@ class ClassificationTree(BaseTree):
         return weighted_gini
 
     def create_node(self, data):
+        """Create a node of the decision tree.
+
+        Args:
+            data (numpy.ndarray): The dataset to split.
+
+        Returns:
+            Node: The created node.
+        """
         node = Node(None)
         gini = self.gini_index(data)
 
