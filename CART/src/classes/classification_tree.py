@@ -4,16 +4,25 @@
 # Third party imports
 import numpy as np
 from base_tree import BaseTree
+from node import Node
 
 class ClassificationTree(BaseTree):
     def __init__(self) -> None:
         super().__init__(self)
 
-    def gini_index(self, y):
-        size = len(y)
+    def gini_index(self, data):
+        """Calculate the Gini index for a given dataset.
+
+        Args:
+            y (_type_): The target values of the dataset.
+
+        Returns:
+            float: The Gini index for the given dataset.
+        """
+        size = len(data)
         instances = np.zeros(len(self.classes))
 
-        for row in y:
+        for row in data:
             class_label = int(row[-1])
             instances[class_label] += 1
 
@@ -26,6 +35,14 @@ class ClassificationTree(BaseTree):
         return gini
 
     def calculate_gini_index(self, child):
+        """Calculate the weighted Gini index for a given split.
+
+        Args:
+            child (dict): A dictionary containing the left and right child nodes resulting from a split.
+
+        Returns:
+            float: The weighted Gini index for the given split.
+        """
         group_size = [len(child['left']), len(child['right'])]
         left_gini = self.gini_index(child['left'])
         right_gini =  self.gini_index(child['right'])
@@ -35,3 +52,38 @@ class ClassificationTree(BaseTree):
         weighted_gini = weight_left * left_gini + weight_right * right_gini
 
         return weighted_gini
+    
+    def create(self, data):
+        node = Node(None)
+        gini = self.gini_index(data)
+
+        if gini <= self.min_gini:
+            node.is_leaf = True
+            target_values = [row[-1] for row in data]
+            node.value = np.bincount(target_values).argmax()
+            node.gini_value = gini
+            return node
+        
+        if len(data) <= self.min_samples:
+            node.is_leaf = True
+            target_values = [row[-1] for row in data]
+            node.value = np.bincount(target_values).argmax()
+            node.gini_value = gini
+            return node
+        
+        gini_index = 1.0
+        for col_index in range(len(data[0])-1):
+            for row_index in range(len(data)):
+                value = data[row_index][col_index]
+                child = self.split_dataset(data, col_index, value)
+                node_gini_index = self.calculate_gini_index(child)
+                
+                if node_gini_index < gini_index:
+                    gini_index = node_gini_index
+                    node.value = value
+                    node.gini_value = node_gini_index
+                    node.col_index = col_index
+                    node.left = child['left']
+                    node.right = child['right']
+
+        return node
