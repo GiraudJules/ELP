@@ -61,6 +61,7 @@ class BaseTree:
 
         raise NotImplementedError
 
+
     def build_tree(self, node: Node, current_depth: int) -> None:
         """
         Build the tree recursively.
