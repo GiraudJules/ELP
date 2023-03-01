@@ -7,8 +7,9 @@ from base_tree import BaseTree
 from node import Node
 
 class ClassificationTree(BaseTree):
-    def __init__(self) -> None:
-        super().__init__(self)
+    def __init__(self, min_gini, ) -> None:
+        super().__init__()
+        self.min_gini = min_gini
 
     def gini_index(self, data):
         """Calculate the Gini index for a given dataset.
@@ -52,32 +53,25 @@ class ClassificationTree(BaseTree):
         weighted_gini = weight_left * left_gini + weight_right * right_gini
 
         return weighted_gini
-    
-    def create(self, data):
+
+    def create_node(self, data):
         node = Node(None)
         gini = self.gini_index(data)
 
-        if gini <= self.min_gini:
+        if len(data) <= self.min_sample_split:
             node.is_leaf = True
             target_values = [row[-1] for row in data]
             node.value = np.bincount(target_values).argmax()
             node.gini_value = gini
             return node
-        
-        if len(data) <= self.min_samples:
-            node.is_leaf = True
-            target_values = [row[-1] for row in data]
-            node.value = np.bincount(target_values).argmax()
-            node.gini_value = gini
-            return node
-        
+
         gini_index = 1.0
         for col_index in range(len(data[0])-1):
             for row_index in range(len(data)):
                 value = data[row_index][col_index]
                 child = self.split_dataset(data, col_index, value)
                 node_gini_index = self.calculate_gini_index(child)
-                
+
                 if node_gini_index < gini_index:
                     gini_index = node_gini_index
                     node.value = value
