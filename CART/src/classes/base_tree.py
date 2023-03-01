@@ -9,7 +9,7 @@ import numpy as np
 from node import Node
 
 
-class BaseTree(ABC):
+class BaseTree:
     """
     Base class to build a Classification or Regression Tree.
     To build a child of this class and inherit the methods, need to implement the methods.
@@ -22,9 +22,7 @@ class BaseTree(ABC):
         self.max_depth = max_depth
         self.min_sample_split = min_sample_split
         self.classes = None
-        self.risk_function = None
 
-    @abstractmethod
     def fit(self, X_features: np.array, y_features: np.array) -> Node():
         """
         - Retrieves the different classes from X_features and stores it into self.classes
@@ -35,15 +33,16 @@ class BaseTree(ABC):
             X_features (np.array): X features from dataset
             y_features (np.array): y features from dataset
 
-        Raises:
-            NotImplementedError: if the method is not implement
-
         Returns:
             self.root: new Node of the tree
         """
-        raise NotImplementedError
+        self.classes = y_features
+        data = [X_features, y_features]
+        self.root = self.create_node(data)
+        self.build_tree(self.root, current_depth=0)
 
-    @abstractmethod
+        return self.root
+
     def predict(
         self, X_test: Union[Union[int, str], np.array]
     ) -> Union[Union[int, str], np.array]:
@@ -55,9 +54,6 @@ class BaseTree(ABC):
         Args:
             X_test (Union[Union[int,str],np.array]): test features to predict on
 
-        Raises:
-            NotImplementedError: if the method is not implement
-
         Returns:
             Union[Union[int, str], np.array]: whether a single int or str; or np.array
 
@@ -65,7 +61,6 @@ class BaseTree(ABC):
 
         raise NotImplementedError
 
-    @abstractmethod
     def build_tree(self, node: Node(), current_depth: int) -> None:
         """
         Build the tree recursively.
@@ -74,12 +69,11 @@ class BaseTree(ABC):
             node (Node()): current node
             current_depth (int): current depth of the tree
 
-        Raises:
-            NotImplementedError: if the method is not implement
+        Returns:
+            None
         """
         raise NotImplementedError
 
-    @abstractmethod
     def split_dataset(
         self,
         X_features: np.array,
@@ -96,25 +90,17 @@ class BaseTree(ABC):
             splitting_point_index (int): index of the splitting point
             splitting_point (float): value of the splitting point
 
-        Raises:
-            NotImplementedError: if the method is not implement
-
         Returns:
             Dict[str('left'):List, str('right'):List]: dictionary with left and right datasets
         """
         raise NotImplementedError
 
-    @abstractmethod
-    def create_node(self, X_features: np.array, y_features: np.array) -> Node():
+    def create_node(self, data: list) -> Node():
         """
         Create a new node
 
         Args:
-            X_features (np.array): X features from dataset
-            y_features (np.array): y features from dataset
-
-        Raises:
-            NotImplementedError: if the method is not implement
+            data (np.array): X and y features for the left or right child of the node
 
         Returns:
             Node(): new node
