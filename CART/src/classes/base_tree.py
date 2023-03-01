@@ -23,7 +23,7 @@ class BaseTree:
         self.min_sample_split = min_sample_split
         self.classes = None
 
-    def fit(self, X_features: np.array, y_features: np.array) -> Node():
+    def fit(self, X_features: np.array, y_features: np.array) -> Node:
         """
         - Retrieves the different classes from X_features and stores it into self.classes
         - Assign new value to self.node with self.create_node
@@ -61,7 +61,7 @@ class BaseTree:
 
         raise NotImplementedError
 
-    def build_tree(self, node: Node(), current_depth: int) -> None:
+    def build_tree(self, node: Node, current_depth: int) -> None:
         """
         Build the tree recursively.
 
@@ -72,7 +72,25 @@ class BaseTree:
         Returns:
             None
         """
-        raise NotImplementedError
+        # Assert if current depth is less than max depth
+        if current_depth < self.max_depth:
+            # If left child is a list
+            if node.left is not None and isinstance(node.left, list):
+                # Instanciate a new node from left child
+                left_node = self.create_node(node.left)
+                node.left = left_node
+                # While left node is not a leaf, build the tree
+                if node.left.is_leaf is not True:
+                    self.build_tree(node.left, current_depth + 1)
+
+            # If right child is a list
+            if node.right is not None and isinstance(node.right, list):
+                # Instanciate a new node from right child
+                right_node = self.create_node(node.right)
+                node.right = right_node
+                # While left node is not a leaf, build the tree
+                if node.right.is_leaf is not True:
+                    self.build_tree(node.right, current_depth + 1)
 
     def split_dataset(
         self,
@@ -113,7 +131,7 @@ class BaseTree:
         return {"left": left_child, "right": right_child}
 
     @abstractmethod
-    def create_node(self, data: list) -> Node():
+    def create_node(self, data: list) -> Node:
         """
         Create a new node
 
