@@ -6,7 +6,7 @@ from typing import Union, Dict, List
 import numpy as np
 
 # Local applications imports
-from node import Node
+from src.classes.node import Node
 
 
 class BaseTree:
