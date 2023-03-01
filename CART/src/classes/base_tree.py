@@ -1,5 +1,5 @@
 # Standard library imports
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Union, Dict, List
 
 # Third party imports
@@ -80,21 +80,40 @@ class BaseTree:
         y_features: np.array,
         splitting_point_index: int,
         splitting_point: float,
-    ) -> Dict[str("left") : List, str("right") : List]:
+    ) -> Dict[str("left") : List[list, list], str("right") : List[list, list]]:
         """
         Split dataset into left and right datasets.
 
         Args:
-            X_features (np.array): X features from dataset
-            y_features (np.array): y features from dataset
-            splitting_point_index (int): index of the splitting point
+            X_features (np.array): X values of ONE specific feature from dataset
+            y_features (np.array): y of ONE specific feature from dataset
             splitting_point (float): value of the splitting point
 
         Returns:
-            Dict[str('left'):List, str('right'):List]: dictionary with left and right datasets
+            Dict[str('left'):List[list,list], str('right'):List[list,list]]: dictionary with left and right datasets
         """
-        raise NotImplementedError
 
+        left_x_data = []
+        left_y_data = []
+
+        right_x_data = []
+        right_y_data = []
+
+        for i, val in enumerate(X_features):
+            if y_features[i] <= splitting_point:
+                left_x_data.append(val)
+                left_y_data.append(y_features[i])
+
+            if y_features[i] > splitting_point:
+                right_x_data.append(val)
+                right_y_data.append(y_features[i])
+
+        left_child = [left_x_data, left_y_data]
+        right_child = [right_x_data, right_y_data]
+
+        return {"left": left_child, "right": right_child}
+
+    @abstractmethod
     def create_node(self, data: list) -> Node():
         """
         Create a new node
