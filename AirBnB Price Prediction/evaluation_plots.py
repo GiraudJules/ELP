@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
 
-#SCATTER PLOT FUNCTION
+#SCATTER PLOT FUNCTION 
 def scatter_plot(model_name, y_test, y_pred):
     '''
     The purpose of the function is to make a scatter plot to compare the ground truth y values and the predicted y values for a given model.
