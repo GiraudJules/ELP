@@ -1,20 +1,13 @@
 # Standard library imports
 from abc import ABC, abstractmethod
-<<<<<<< HEAD
-from typing import Union
-=======
 from typing import Union, Dict, List
->>>>>>> origin/dev
 
 # Third party imports
 import numpy as np
 
-<<<<<<< HEAD
-=======
 # Local applications imports
 from node import Node
 
->>>>>>> origin/dev
 
 class BaseTree(ABC):
     """
@@ -22,26 +15,6 @@ class BaseTree(ABC):
     To build a child of this class and inherit the methods, need to implement the methods.
     """
 
-<<<<<<< HEAD
-    @abstractmethod
-    def fit(self, X_features, y_features):
-        """
-        Method to fit the build decision tree classifier.
-
-        Parameters
-        ----------
-        X_features (np.array)
-        y_features (np.array)
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        NotImplementedError
-            If the method is not implement
-=======
     def __init__(self, min_sample_leaf, max_depth, min_sample_split):
         super().__init__()
         self.root = None
@@ -67,19 +40,10 @@ class BaseTree(ABC):
 
         Returns:
             self.root: new Node of the tree
->>>>>>> origin/dev
         """
         raise NotImplementedError
 
     @abstractmethod
-<<<<<<< HEAD
-    def predict(self, inputs) -> Union[int, str]:
-        """Predict class for a single sample.
-
-        Raises
-        ------
-        NotImplementedError: if the method is not implement
-=======
     def predict(
         self, X_test: Union[Union[int, str], np.array]
     ) -> Union[Union[int, str], np.array]:
@@ -154,6 +118,5 @@ class BaseTree(ABC):
 
         Returns:
             Node(): new node
->>>>>>> origin/dev
         """
         raise NotImplementedError
