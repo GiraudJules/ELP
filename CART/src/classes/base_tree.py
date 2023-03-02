@@ -97,7 +97,7 @@ class BaseTree:
         X_features: np.array,
         y_features: np.array,
         splitting_point: float,
-    ) -> Dict[str("left") : [list, list], str("right") : [list, list]]:
+    ) -> Dict[str:[list, list], str:[list, list]]:
         """
         Split dataset into left and right datasets.
 
