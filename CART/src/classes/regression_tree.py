@@ -6,10 +6,11 @@ from src.classes.base_tree import BaseTree
 from src.classes.node import Node
 
 class RegressionTree(BaseTree):
-    def __init__(self, min_sample_leaf, min_sample_split) -> None:
+    def __init__(self, min_sample_leaf, min_sample_split, max_depth) -> None:
         super().__init__(self, min_sample_leaf, min_sample_split)
         self.min_sample_leaf = min_sample_leaf
         self.min_sample_split = min_sample_split
+        self.max_depth = max_depth
 
     def create_node(self, data: list) -> Node:
         """
@@ -22,8 +23,10 @@ class RegressionTree(BaseTree):
             Node(): new node
         """
         node = Node(None)
-        X, y = np.transpose(data[0]), data[1]
 
+        X, y = np.transpose(data[0]), data[1]
+        print("X : ", X)
+        print("y : ", y)
         ### Check if node has enough samples to be split again
         if len(data[1]) <= self.min_sample_split:
             node.is_leaf = True
@@ -39,14 +42,14 @@ class RegressionTree(BaseTree):
                 # Check the minimum number of samples required to be at a leaf node
                 if ((len(child['left'][0]) >= self.min_sample_leaf) and (len(child['right'][0]) >= self.min_sample_leaf)):
                     candidate_risk_value = self.risk_regression(child)
-                    print(candidate_risk_value)
                     if candidate_risk_value < risk_value:
-                        print('True')
                         risk_value = candidate_risk_value
                         node.value = value
                         node.risk_value = candidate_risk_value
                         node.left_child = child['left']
                         node.right_child = child['right']
+
+        return node
 
     def sort_data(self, X: np.array, y: np.array) -> tuple:
         """Sort data in order to try every split candidates
@@ -83,9 +86,11 @@ class RegressionTree(BaseTree):
         Returns:
             float: Risk value of two regions
         """
-        print(child['left'])
-        left_risk = self.mse(child['left'])
-        right_risk =  self.mse(child['right'])
+        
+        y_left = child['left'][1]
+        y_right = child['right'][1]
+        left_risk = self.mse(y_left)
+        right_risk =  self.mse(y_right)
 
         risk_value = left_risk + right_risk
         return risk_value

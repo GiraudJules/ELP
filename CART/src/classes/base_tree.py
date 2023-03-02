@@ -38,7 +38,6 @@ class BaseTree:
         self.classes = y_features
         data = [X_features, y_features]
         self.root = self.create_node(data)
-        print(self.root.left_child)
         self.build_tree(self.root, current_depth=0)
 
         return self.root
@@ -75,22 +74,22 @@ class BaseTree:
         # Assert if current depth is less than max depth
         if current_depth < self.max_depth:
             # If left child is a list
-            if node.left is not None and isinstance(node.left, list):
+            if node.left_child is not None and isinstance(node.left_child, list):
                 # Instanciate a new node from left child
-                left_node = self.create_node(node.left)
-                node.left = left_node
+                left_node = self.create_node(node.left_child)
+                node.left_child = left_node
                 # While left node is not a leaf, build the tree
-                if node.left.is_leaf is not True:
-                    self.build_tree(node.left, current_depth + 1)
+                if node.left_child.is_leaf is not True:
+                    self.build_tree(node.left_child, current_depth + 1)
 
             # If right child is a list
-            if node.right is not None and isinstance(node.right, list):
+            if node.right_child is not None and isinstance(node.right_child, list):
                 # Instanciate a new node from right child
-                right_node = self.create_node(node.right)
-                node.right = right_node
+                right_node = self.create_node(node.right_child)
+                node.right_child = right_node
                 # While left node is not a leaf, build the tree
-                if node.right.is_leaf is not True:
-                    self.build_tree(node.right, current_depth + 1)
+                if node.right_child.is_leaf is not True:
+                    self.build_tree(node.right_child, current_depth + 1)
 
     def split_dataset(
         self,
