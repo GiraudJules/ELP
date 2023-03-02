@@ -16,7 +16,6 @@ class BaseTree:
     """
 
     def __init__(self, min_sample_leaf, max_depth, min_sample_split):
-        super().__init__()
         self.root = None
         self.min_sample_leaf = min_sample_leaf
         self.max_depth = max_depth
@@ -39,6 +38,7 @@ class BaseTree:
         self.classes = y_features
         data = [X_features, y_features]
         self.root = self.create_node(data)
+        print(self.root.left_child)
         self.build_tree(self.root, current_depth=0)
 
         return self.root
@@ -97,7 +97,7 @@ class BaseTree:
         X_features: np.array,
         y_features: np.array,
         splitting_point: float,
-    ) -> Dict[str:[list, list], str:[list, list]]:
+    ) -> Dict[str, list]:
         """
         Split dataset into left and right datasets.
 
@@ -117,11 +117,11 @@ class BaseTree:
         right_y_data = []
 
         for i, val in enumerate(X_features):
-            if y_features[i] <= splitting_point:
+            if X_features[i] <= splitting_point:
                 left_x_data.append(val)
                 left_y_data.append(y_features[i])
 
-            if y_features[i] > splitting_point:
+            if X_features[i] > splitting_point:
                 right_x_data.append(val)
                 right_y_data.append(y_features[i])
 
