@@ -63,8 +63,24 @@ class BaseTree:
             Union[Union[int, str], np.array]: whether a single int or str; or np.array
 
         """
+        predictions = []
 
-        raise NotImplementedError
+        for row in X_test.values:
+
+            node = self.root
+
+            while node.is_leaf is not True:
+
+                if row[node.col_index] <= node.splitting_point:
+                    node = node.left_child
+                    continue
+
+                if row[node.col_index] > node.splitting_point:
+                    node = node.right_child
+
+            predictions.append(node.value)
+
+        return predictions
 
     def build_tree(self, node: Node, current_depth: int) -> None:
         """
