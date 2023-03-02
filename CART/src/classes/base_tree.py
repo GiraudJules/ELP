@@ -61,7 +61,6 @@ class BaseTree:
 
         raise NotImplementedError
 
-
     def build_tree(self, node: Node, current_depth: int) -> None:
         """
         Build the tree recursively.
@@ -98,7 +97,7 @@ class BaseTree:
         X_features: np.array,
         y_features: np.array,
         splitting_point: float,
-    ) -> Dict[str("left") : List[list, list], str("right") : List[list, list]]:
+    ) -> Dict[str("left") : [list, list], str("right") : [list, list]]:
         """
         Split dataset into left and right datasets.
 
