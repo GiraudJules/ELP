@@ -65,6 +65,7 @@ class ClassificationTree(BaseTree):
         node = Node(None)
         gini = self.gini_index(data)
 
+        # Check if node has enough samples to be split again
         if len(data) <= self.min_sample_split:
             node.is_leaf = True
             target_values = [row[-1] for row in data]
@@ -77,14 +78,17 @@ class ClassificationTree(BaseTree):
             for row_index in range(len(data)):
                 value = data[row_index][col_index]
                 child = self.split_dataset(data, col_index, value)
-                node_gini_index = self.calculate_gini_index(child)
 
-                if node_gini_index < gini_index:
-                    gini_index = node_gini_index
-                    node.value = value
-                    node.gini_value = node_gini_index
-                    node.col_index = col_index
-                    node.left = child['left']
-                    node.right = child['right']
+                # Check the minimum number of samples required to be at a leaf node
+                if (len(child['left']) >= self.min_sample_leaf & len(child['right']) >= self.min_sample_leaf):
+                    node_gini_index = self.calculate_gini_index(child)
+
+                    if node_gini_index < gini_index:
+                        gini_index = node_gini_index
+                        node.value = value
+                        node.gini_value = node_gini_index
+                        node.col_index = col_index
+                        node.left = child['left']
+                        node.right = child['right']
 
         return node
