@@ -4,6 +4,7 @@ from typing import Union, Dict, List
 
 # Third party imports
 import numpy as np
+import pandas as pd
 
 # Local applications imports
 from src.classes.node import Node
@@ -22,7 +23,7 @@ class BaseTree:
         self.min_sample_split = min_sample_split
         self.classes = None
 
-    def fit(self, X_features: np.array, y_features: np.array) -> Node:
+    def fit(self, dataframe: pd.DataFrame) -> Node:
         """
         - Retrieves the different classes from X_features and stores it into self.classes
         - Assign new value to self.node with self.create_node
@@ -93,41 +94,37 @@ class BaseTree:
 
     def split_dataset(
         self,
-        X_features: np.array,
-        y_features: np.array,
+        dataframe: pd.DataFrame,
+        column_index: int,
         splitting_point: float,
     ) -> Dict[str, list]:
         """
         Split dataset into left and right datasets.
 
         Args:
-            X_features (np.array): X values of ONE specific feature from dataset
-            y_features (np.array): y of ONE specific feature from dataset
+            dataframe (pd.DataFrame): dataset to split
+            column_index (int): index of the column to split
             splitting_point (float): value of the splitting point
 
         Returns:
             Dict[str('left'):List[list,list], str('right'):List[list,list]]: dictionary with left and right datasets
         """
+        # Instanciate empty lists for left and right child
+        left_child, right_child = [], []
 
-        left_x_data = []
-        left_y_data = []
+        # Iterate over dataset to split
+        for i, val in enumerate(dataframe):
 
-        right_x_data = []
-        right_y_data = []
+            # If value is less than or equal to splitting point, append to left child
+            if dataframe[i][column_index] <= splitting_point:
+                left_child.append(dataframe[i])
 
-        for i, val in enumerate(X_features):
-            if X_features[i] <= splitting_point:
-                left_x_data.append(val)
-                left_y_data.append(y_features[i])
+            # If value is greater than splitting point, append to right child
+            if dataframe[i][column_index] > splitting_point:
+                right_child.append(dataframe[i])
 
-            if X_features[i] > splitting_point:
-                right_x_data.append(val)
-                right_y_data.append(y_features[i])
-
-        left_child = [left_x_data, left_y_data]
-        right_child = [right_x_data, right_y_data]
-
-        return {"left": left_child, "right": right_child}
+        # Return dictionary with left and right child
+        return {"l": left_child, "r": right_child}
 
     @abstractmethod
     def create_node(self, data: list) -> Node:
