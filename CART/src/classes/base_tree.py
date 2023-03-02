@@ -36,11 +36,16 @@ class BaseTree:
         Returns:
             self.root: new Node of the tree
         """
-        self.classes = y_features
-        data = [X_features, y_features]
-        self.root = self.create_node(data)
+        # Retrieve the different classes from X_features and store it into self.classes
+        self.classes = list(set(int(row[-1]) for row in dataframe.values))
+
+        # Assign new value to self.node with self.create_node
+        self.root = self.create_node(dataframe)
+
+        # Build the tree from new root and current_depth
         self.build_tree(self.root, current_depth=0)
 
+        # Return the root of the tree
         return self.root
 
     def predict(
@@ -97,7 +102,7 @@ class BaseTree:
         dataframe: pd.DataFrame,
         column_index: int,
         splitting_point: float,
-    ) -> Dict[str, list]:
+    ) -> Dict[str, pd.DataFrame]:
         """
         Split dataset into left and right datasets.
 
@@ -107,24 +112,31 @@ class BaseTree:
             splitting_point (float): value of the splitting point
 
         Returns:
-            Dict[str('left'):List[list,list], str('right'):List[list,list]]: dictionary with left and right datasets
+            Dict[str:pd.DataFrame, str: pd.DataFrame]: dictionary with left and right datasets
         """
-        # Instanciate empty lists for left and right child
-        left_child, right_child = [], []
+        # Instanciante empty dataframes
+        left_child = pd.DataFrame()
+        right_child = pd.DataFrame()
 
         # Iterate over dataset to split
-        for i, val in enumerate(dataframe):
+        for i, val in enumerate(dataframe.values):
 
             # If value is less than or equal to splitting point, append to left child
-            if dataframe[i][column_index] <= splitting_point:
-                left_child.append(dataframe[i])
+            if dataframe.iloc[i, column_index] <= splitting_point:
+                # Concatenate new value to dataframe
+                left_child = pd.concat(
+                    [left_child, dataframe.iloc[i, :]], axis=1, ignore_index=True
+                )
 
             # If value is greater than splitting point, append to right child
-            if dataframe[i][column_index] > splitting_point:
-                right_child.append(dataframe[i])
+            if dataframe.iloc[i, column_index] > splitting_point:
+                # Concatenate new value to dataframe
+                right_child = pd.concat(
+                    [right_child, dataframe.iloc[i, :]], axis=1, ignore_index=True
+                )
 
         # Return dictionary with left and right child
-        return {"l": left_child, "r": right_child}
+        return {"left": left_child.T, "right": right_child.T}
 
     @abstractmethod
     def create_node(self, data: list) -> Node:
