@@ -3,13 +3,12 @@
 
 # Third party imports
 import numpy as np
-from base_tree import BaseTree
-from node import Node
+from src.classes.base_tree import BaseTree
+from src.classes.node import Node
 
 class ClassificationTree(BaseTree):
-    def __init__(self, min_gini) -> None:
-        super().__init__()
-        self.min_gini = min_gini
+    def __init__(self, min_sample_leaf, max_depth, min_sample_split) -> None:
+        super().__init__(min_sample_leaf, max_depth, min_sample_split)
 
     def gini_index(self, data):
         """Calculate the Gini index for a given dataset.
