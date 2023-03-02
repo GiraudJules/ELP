@@ -10,6 +10,7 @@ class Node:
         splitting_point (float): value to split the data
         left_child (List[list, list]): left child of the node
         right_child (List[list, list]): right child of the node
+        column_index (int): index of the column to split
         risk_value (int): risk value of the node
         is_leaf (bool): whether the node is a leaf or not
 
@@ -21,5 +22,6 @@ class Node:
         self.splitting_point: float = value
         self.left_child: List[list, list] = None
         self.right_child: List[list, list] = None
+        self.column_index: int = None
         self.risk_value: int = None
         self.is_leaf: bool = is_leaf
