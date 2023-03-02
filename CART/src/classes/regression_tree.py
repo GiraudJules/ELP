@@ -23,29 +23,42 @@ class RegressionTree(BaseTree):
             Node(): new node
         """
         node = Node(None)
-
+        
         ### Check if node has enough samples to be split again
         if len(data) <= self.min_sample_split:
             node.is_leaf = True
-            node.value = data[data.columns[-1]].mean()
+            node.predicted_value = data[data.columns[-1]].mean()
             return node
         
         risk_value = np.inf
         for col_index in range(len(data.columns) - 2):
             data_sorted = data.sort_values(by=data.columns[col_index])
             for row_index in range(len(data_sorted) - 1):
-                value = ((data_sorted.iloc[row_index][col_index] + data_sorted.iloc[row_index + 1][col_index]) / 2)
-                child = self.split_dataset(data_sorted, col_index, value)
+                splitting_value = ((data_sorted.iloc[row_index][col_index] + data_sorted.iloc[row_index + 1][col_index]) / 2)
+                child = self.split_dataset(data_sorted, col_index, splitting_value)
                 
-                # Check the minimum number of samples required to be at a leaf node
+                # Check the minimum number of samples required to be at a leaf node after splitting
                 if ((len(child['left']) >= self.min_sample_leaf) and (len(child['right']) >= self.min_sample_leaf)):
                     candidate_risk_value = self.risk_regression(child)
+
+                    # If it is current lowest MSE, we update the node
                     if candidate_risk_value < risk_value:
                         risk_value = candidate_risk_value
-                        node.value = value
-                        node.risk_value = candidate_risk_value
+                        
+                        ## Update the node
+                        # Which value to separate data
+                        node.splitting_point = splitting_value
+                        # Index of the feature X
+                        node.column_index = col_index
+                        # Set of X/y which go to left and right
                         node.left_child = child['left']
                         node.right_child = child['right']
+                        
+                        # We set that the node is not a leaf
+                        node.is_leaf = False
+                else:
+                    node.is_leaf = True
+                    node.predicted_value = data[data.columns[-1]].mean()
 
         return node
 
