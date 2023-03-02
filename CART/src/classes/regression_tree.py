@@ -31,11 +31,12 @@ class RegressionTree(BaseTree):
             return node
         
         risk_value = np.inf
-        for col_index in range(len(data.columns - 2)):
-            data_sorted = data.sort_values(by=data.column[col_index])
+        for col_index in range(len(data.columns) - 2):
+            data_sorted = data.sort_values(by=data.columns[col_index])
             for row_index in range(len(data_sorted) - 1):
                 value = ((data_sorted.iloc[row_index][col_index] + data_sorted.iloc[row_index + 1][col_index]) / 2)
-                child = self.split_dataset(data_sorted, value)
+                child = self.split_dataset(data_sorted, col_index, value)
+                
                 # Check the minimum number of samples required to be at a leaf node
                 if ((len(child['left']) >= self.min_sample_leaf) and (len(child['right']) >= self.min_sample_leaf)):
                     candidate_risk_value = self.risk_regression(child)
