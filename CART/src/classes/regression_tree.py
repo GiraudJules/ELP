@@ -12,7 +12,7 @@ class RegressionTree(BaseTree):
         self.min_sample_split = min_sample_split
         self.max_depth = max_depth
 
-    def create_node(self, data: list) -> Node:
+    def create_node(self, data) -> Node:
         """
         Create a new node
 
@@ -24,23 +24,20 @@ class RegressionTree(BaseTree):
         """
         node = Node(None)
 
-        X, y = np.transpose(data[0]), data[1]
-        print("X : ", X)
-        print("y : ", y)
         ### Check if node has enough samples to be split again
-        if len(data[1]) <= self.min_sample_split:
+        if len(data) <= self.min_sample_split:
             node.is_leaf = True
-            node.value = np.mean(data[1])
+            node.value = data[data.columns[-1]].mean()
             return node
         
         risk_value = np.inf
-        for col_index in X:
-            X_sorted, y_sorted = self.sort_data(col_index, y)
-            for row_index in range(len(X_sorted) - 1):
-                value = ((X_sorted[row_index] + X_sorted[row_index + 1]) / 2)
-                child = self.split_dataset(X_sorted, y_sorted, value)
+        for col_index in range(len(data.columns - 2)):
+            data_sorted = data.sort_values(by=data.column[col_index])
+            for row_index in range(len(data_sorted) - 1):
+                value = ((data_sorted.iloc[row_index][col_index] + data_sorted.iloc[row_index + 1][col_index]) / 2)
+                child = self.split_dataset(data_sorted, value)
                 # Check the minimum number of samples required to be at a leaf node
-                if ((len(child['left'][0]) >= self.min_sample_leaf) and (len(child['right'][0]) >= self.min_sample_leaf)):
+                if ((len(child['left']) >= self.min_sample_leaf) and (len(child['right']) >= self.min_sample_leaf)):
                     candidate_risk_value = self.risk_regression(child)
                     if candidate_risk_value < risk_value:
                         risk_value = candidate_risk_value
@@ -64,7 +61,7 @@ class RegressionTree(BaseTree):
         X_sorted, y_sorted = (list(t) for t in zip(*sorted(zip(X, y))))
         return X_sorted, y_sorted
 
-    def mse(self, y: Union[np.array, List]) -> np.float64:
+    def mse(self, y: pd.DataFrame) -> np.float64:
         """Compute Mean Square Error from the average of a given region R
 
         Args:
@@ -73,7 +70,7 @@ class RegressionTree(BaseTree):
         Returns:
             float: MSE
         """
-        y_mean = np.mean(y)
+        y_mean = y.mean()
         mse = np.square(y - y_mean).mean()
         return mse
     
@@ -87,8 +84,12 @@ class RegressionTree(BaseTree):
             float: Risk value of two regions
         """
         
-        y_left = child['left'][1]
-        y_right = child['right'][1]
+        df_left = child['left']
+        df_right = child['right']
+
+        y_left = df_left.iloc[:, -1]
+        y_right = df_right.iloc[:, -1]
+
         left_risk = self.mse(y_left)
         right_risk =  self.mse(y_right)
 
