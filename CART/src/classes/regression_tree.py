@@ -73,17 +73,19 @@ class RegressionTree(BaseTree):
                             " ======> Enough samples to split, setting node as NOT LEAF"
                         )
                         # Set of X/y which go to left and right
-                        node.left_child = child["left"]
-                        node.right_child = child["right"]
+                        node.left_region = child["left"]
+                        node.right_region = child["right"]
                         # We set that the node is not a leaf
                         node.is_leaf = False
+                        print("Corrsponding predicted value is :", node.predicted_value)
+                        
                     else:
                         print(
                             " ======> Not enough samples to split, setting node as LEAF"
                         )
                         # Set of X/y which go to left and right
-                        node.left_child = child["left"]
-                        node.right_child = child["right"]
+                        node.left_region = child["left"]
+                        node.right_region = child["right"]
                         node.is_leaf = True
                         print("Stopping Criterion : Min Sample Leaf")
 
@@ -91,10 +93,10 @@ class RegressionTree(BaseTree):
             f"-----------------------------> Node selected for feature n° {node.column_index}: {node.splitting_point}"
         )
         print(
-            f"-----------------------------> Length left child: {len(node.left_child)}"
+            f"-----------------------------> Length left child: {len(node.left_region)}"
         )
         print(
-            f"-----------------------------> Length right child: {len(node.right_child)}"
+            f"-----------------------------> Length right child: {len(node.right_region)}"
         )
         print(f"-----------------------------> Risk value: {risk_value}")
         print(f"-----------------------------> Predicted value: {node.predicted_value}")

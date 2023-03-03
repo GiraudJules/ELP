@@ -1,5 +1,6 @@
 # Standard library imports
 from typing import List
+import pandas as pd
 
 
 class Node:
@@ -19,8 +20,10 @@ class Node:
 
     def __init__(self, value, is_leaf=False):
         self.splitting_point: float = value
-        self.left_child: List[list, list] = None
-        self.right_child: List[list, list] = None
+        self.left_region: pd.DataFrame = None
+        self.right_region: pd.DataFrame = None
+        self.left_child_node: Node = None
+        self.right_child_node: Node = None
         self.column_index: int = None
         self.is_leaf: bool = is_leaf
         self.predicted_value: float = None
