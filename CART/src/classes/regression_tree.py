@@ -49,45 +49,41 @@ class RegressionTree(BaseTree):
                 child = self.split_dataset(data_sorted, col_index, splitting_value)
                 print(f"- len_left_child: {len(child['left'])}")
                 print(f"- len_right_child: {len(child['right'])}")
-                candidate_risk_value = self.risk_regression(child)
-                print(f"- candidate_risk_value: {candidate_risk_value}")
-                # If it is current lowest MSE, we update the node
-                if candidate_risk_value < risk_value:
-                    print(" /!\ BEST Risk Value ====> Updating node")
-                    risk_value = candidate_risk_value
 
-                    ## Update the node
-                    # Which value to separate data
-                    node.splitting_point = splitting_value
-                    # Index of the feature X
-                    node.column_index = col_index
+                if (len(child["left"]) >= self.min_sample_leaf) and (
+                        len(child["right"]) >= self.min_sample_leaf):
+                    
+                    print(" ======> Enough samples to split")
+                    candidate_risk_value = self.risk_regression(child)
+                    print(f"- candidate_risk_value: {candidate_risk_value}")
+                    # If it is current lowest MSE, we update the node
+                    if candidate_risk_value < risk_value:
+                        print(" /!\ BEST Risk Value ====> Updating node")
+                        risk_value = candidate_risk_value
 
-                    # Set of predicted value for this node
-                    node.predicted_value = data[data.columns[-1]].mean()
+                        ## Update the node
+                        # Which value to separate data
+                        node.splitting_point = splitting_value
+                        # Index of the feature X
+                        node.column_index = col_index
 
-                    # Check the minimum number of samples required to be at a leaf node after splitting
-                    if (len(child["left"]) >= self.min_sample_leaf) and (
-                        len(child["right"]) >= self.min_sample_leaf
-                    ):
-                        print(
-                            " ======> Enough samples to split, setting node as NOT LEAF"
-                        )
+                        # Set of predicted value for this node
+                        node.predicted_value = data[data.columns[-1]].mean()
+
                         # Set of X/y which go to left and right
                         node.left_region = child["left"]
                         node.right_region = child["right"]
                         # We set that the node is not a leaf
                         node.is_leaf = False
-                        print("Corrsponding predicted value is :", node.predicted_value)
+                        print("Corresponding predicted value is :", node.predicted_value)
                         
-                    else:
-                        print(
-                            " ======> Not enough samples to split, setting node as LEAF"
-                        )
-                        # Set of X/y which go to left and right
-                        node.left_region = child["left"]
-                        node.right_region = child["right"]
-                        node.is_leaf = True
-                        print("Stopping Criterion : Min Sample Leaf")
+                # else:
+                #     print(" ======> Not enough samples to split, setting node as LEAF")
+                #     # Set of X/y which go to left and right
+                #     node.left_region = child["left"]
+                #     node.right_region = child["right"]
+                #     node.is_leaf = True
+                #     print("Stopping Criterion : Min Sample Leaf")
 
         print(
             f"-----------------------------> Node selected for feature n° {node.column_index}: {node.splitting_point}"
