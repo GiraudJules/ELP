@@ -108,12 +108,14 @@ class BaseTree:
                 # Instanciate a new node from left child
                 print("Create a node with :", len(node.left_child))
                 left_node = self.create_node(node.left_child)
-                node.left_child = left_node
+                print(left_node.is_leaf)
+                # node.left_child = left_node
                 # While left node is not a leaf, build the tree
-                if node.left_child.is_leaf is not True:
-                    self.build_tree(node.left_child, current_depth + 1)
+                if left_node.is_leaf is not True:
+                    self.build_tree(left_node, current_depth + 1)
+                    print("Building tree from left child")
                 else:
-                    print("Left child is a leaf")
+                    print("Left node child is a leaf")
 
             print("Let's create the right child")
             # If right child is a list
@@ -121,12 +123,14 @@ class BaseTree:
                 assert isinstance(node.right_child, pd.DataFrame), "Node child must be of type <pd.DataFrame>"
                 # Instanciate a new node from right child
                 right_node = self.create_node(node.right_child)
-                node.right_child = right_node
+                print(right_node.is_leaf)
+                # node.right_child = right_node
                 # While left node is not a leaf, build the tree
-                if node.right_child.is_leaf is not True:
-                    self.build_tree(node.right_child, current_depth + 1)
+                if right_node.is_leaf is not True:
+                    self.build_tree(right_node, current_depth + 1)
+                    print("Building tree from right child")
                 else:
-                    print("Right child is a leaf")
+                    print("Right node child is a leaf")
         else:
             node.is_leaf = True
 

@@ -26,6 +26,7 @@ class RegressionTree(BaseTree):
         
         ### Check if node has enough samples to be split again
         if len(data) <= self.min_sample_split:
+            print('Stopping Criterion : Min Sample Split')
             node.is_leaf = True
             node.predicted_value = data[data.columns[-1]].mean()
             return node
@@ -37,28 +38,29 @@ class RegressionTree(BaseTree):
                 splitting_value = ((data_sorted.iloc[row_index][col_index] + data_sorted.iloc[row_index + 1][col_index]) / 2)
                 child = self.split_dataset(data_sorted, col_index, splitting_value)
                 
-                # Check the minimum number of samples required to be at a leaf node after splitting
-                if ((len(child['left']) >= self.min_sample_leaf) and (len(child['right']) >= self.min_sample_leaf)):
-                    candidate_risk_value = self.risk_regression(child)
+                candidate_risk_value = self.risk_regression(child)
+                # If it is current lowest MSE, we update the node
+                if candidate_risk_value < risk_value:
+                    risk_value = candidate_risk_value
+                    
+                    ## Update the node
+                    # Which value to separate data
+                    node.splitting_point = splitting_value
+                    # Index of the feature X
+                    node.column_index = col_index
+                    # Set of X/y which go to left and right
+                    node.left_child = child['left']
+                    node.right_child = child['right']
+                    # Set of predicted value for this node
+                    node.predicted_value = data[data.columns[-1]].mean()
 
-                    # If it is current lowest MSE, we update the node
-                    if candidate_risk_value < risk_value:
-                        risk_value = candidate_risk_value
-                        
-                        ## Update the node
-                        # Which value to separate data
-                        node.splitting_point = splitting_value
-                        # Index of the feature X
-                        node.column_index = col_index
-                        # Set of X/y which go to left and right
-                        node.left_child = child['left']
-                        node.right_child = child['right']
-                        
+                    # Check the minimum number of samples required to be at a leaf node after splitting
+                    if ((len(child['left']) >= self.min_sample_leaf) and (len(child['right']) >= self.min_sample_leaf)):
                         # We set that the node is not a leaf
                         node.is_leaf = False
-                else:
-                    node.is_leaf = True
-                    node.predicted_value = data[data.columns[-1]].mean()
+                    else:
+                        node.is_leaf = True
+                        print('Stopping Criterion : Min Sample Leaf')
 
         return node
 
@@ -100,12 +102,18 @@ class RegressionTree(BaseTree):
         
         df_left = child['left']
         df_right = child['right']
+        
+        if len(df_left) > 0:
+            y_left = df_left.iloc[:, -1]
+            left_risk = self.mse(y_left)
+        else:
+            left_risk = 0
 
-        y_left = df_left.iloc[:, -1]
-        y_right = df_right.iloc[:, -1]
-
-        left_risk = self.mse(y_left)
-        right_risk =  self.mse(y_right)
+        if len(df_right) > 0:
+            y_right = df_right.iloc[:, -1]
+            right_risk =  self.mse(y_right)
+        else:
+            right_risk = 0
 
         risk_value = left_risk + right_risk
         return risk_value
