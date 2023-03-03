@@ -70,8 +70,17 @@ class BaseTree:
         for row in X_test.values:
 
             node = self.root
+            print(node)
+
+            print(node.is_leaf)
 
             while node.is_leaf is not True:
+
+                print(node)
+                print(node.left_child)
+                print(node.right_child)
+                print("En attente du Salon...")
+                print(node.is_leaf)
 
                 if row[node.column_index] <= node.splitting_point:
                     node = node.left_child
@@ -96,15 +105,22 @@ class BaseTree:
             None
         """
 
-        print("Node has left :",  len(node.left_child), "and right :", len(node.right_child))
+        print(
+            "Node has left :",
+            len(node.left_child),
+            "and right :",
+            len(node.right_child),
+        )
         print("Node has been splitted on feature X_{}".format(node.column_index))
 
         # Assert if current depth is less than max depth
-        if current_depth < self.max_depth:
+        if (current_depth < self.max_depth) and (node.is_leaf is False):
             print("Let's create the left child")
             # If left child is a list
             if node.left_child is not None:
-                assert isinstance(node.left_child, pd.DataFrame), "Node child must be of type <pd.DataFrame>"
+                assert isinstance(
+                    node.left_child, pd.DataFrame
+                ), "Node child must be of type <pd.DataFrame>"
                 # Instanciate a new node from left child
                 print("Create a node with :", len(node.left_child))
                 left_node = self.create_node(node.left_child)
@@ -120,7 +136,9 @@ class BaseTree:
             print("Let's create the right child")
             # If right child is a list
             if node.right_child is not None:
-                assert isinstance(node.right_child, pd.DataFrame), "Node child must be of type <pd.DataFrame>"
+                assert isinstance(
+                    node.right_child, pd.DataFrame
+                ), "Node child must be of type <pd.DataFrame>"
                 # Instanciate a new node from right child
                 right_node = self.create_node(node.right_child)
                 print(right_node.is_leaf)
@@ -132,6 +150,7 @@ class BaseTree:
                 else:
                     print("Right node child is a leaf")
         else:
+            print("Node is leaf, stopping developing tree")
             node.is_leaf = True
 
     def split_dataset(
