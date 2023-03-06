@@ -144,8 +144,8 @@ class BaseTree:
             print("Node is leaf, stopping developing tree")
             node.is_leaf = True
 
+    @staticmethod
     def split_dataset(
-        self,
         dataframe: pd.DataFrame,
         column_index: int,
         splitting_point: float,
@@ -176,7 +176,7 @@ class BaseTree:
                 )
 
             # If value is greater than splitting point, append to right child
-            if dataframe.iloc[i, column_index] > splitting_point:
+            elif dataframe.iloc[i, column_index] > splitting_point:
                 # Concatenate new value to dataframe
                 right_region = pd.concat(
                     [right_region, dataframe.iloc[i, :]], axis=1, ignore_index=True
