@@ -51,8 +51,9 @@ class RegressionTree(BaseTree):
                 print(f"- len_right_child: {len(child['right'])}")
 
                 if (len(child["left"]) >= self.min_sample_leaf) and (
-                        len(child["right"]) >= self.min_sample_leaf):
-                    
+                    len(child["right"]) >= self.min_sample_leaf
+                ):
+
                     print(" ======> Enough samples to split")
                     candidate_risk_value = self.risk_regression(child)
                     print(f"- candidate_risk_value: {candidate_risk_value}")
@@ -75,8 +76,10 @@ class RegressionTree(BaseTree):
                         node.right_region = child["right"]
                         # We set that the node is not a leaf
                         node.is_leaf = False
-                        print("Corresponding predicted value is :", node.predicted_value)
-                        
+                        print(
+                            "Corresponding predicted value is :", node.predicted_value
+                        )
+
                 # else:
                 #     print(" ======> Not enough samples to split, setting node as LEAF")
                 #     # Set of X/y which go to left and right
@@ -152,5 +155,9 @@ class RegressionTree(BaseTree):
         else:
             right_risk = 0
 
-        risk_value = left_risk + right_risk
+        total_length = len(df_left) + len(df_right)
+        risk_value = (
+            len(df_left) / total_length * left_risk
+            + len(df_right) / total_length * right_risk
+        )
         return risk_value
