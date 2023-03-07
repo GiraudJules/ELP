@@ -10,7 +10,6 @@ from src.classes.node import Node
 class ClassificationTree(BaseTree):
     def __init__(self, min_sample_leaf, max_depth, min_sample_split) -> None:
         super().__init__(min_sample_leaf, max_depth, min_sample_split)
-        self.lendf = None
 
     def gini_index(self, data):
         """Calculate the Gini index for a given dataset.
@@ -22,17 +21,9 @@ class ClassificationTree(BaseTree):
             float: The Gini index for the given dataset.
         """
         size = len(data)
-        if size == 0:
-            return 0
+        instances = np.array(data.groupby(data.columns[-1]).size())
         
-        instances = np.zeros(len(self.classes))
-        target = data.iloc[:, -1].astype(int)
-
-        for class_label in target:
-            instances[class_label] += 1
-
         gini_index = 1.0 - np.sum((instances / size) ** 2)
-
         return gini_index
 
     def calculate_gini_index(self, child):
@@ -95,11 +86,12 @@ class ClassificationTree(BaseTree):
             node.predicted_value = data[data.columns[-1]].mean()
             return node
         
+        parent_gini_index = self.gini_index(data)
         gini_index = 1
-
         print(" Browsing all features ...")
 
-        for col_index in range(len(data.columns) - 2):
+        for col_index in range(len(data.columns) - 1):
+            print(data.columns[col_index])
             print("*" * 30 + f" Feature n°: {col_index} " + "*" * 30)
             data_sorted = data.sort_values(by=data.columns[col_index])
             for row_index in range(len(data_sorted) - 1):
@@ -114,7 +106,9 @@ class ClassificationTree(BaseTree):
                 print(f"- len_right_child: {len(child['right'])}")
 
                 # Check the minimum number of samples required to be at a leaf node
-                if (len(child['left']) >= self.min_sample_leaf & len(child['right']) >= self.min_sample_leaf):
+                if (len(child["left"]) >= self.min_sample_leaf) and (
+                    len(child["right"]) >= self.min_sample_leaf
+                ):
                     print(" ======> Enough samples to split")
                     node_gini_index = self.calculate_gini_index(child)
                     print(f"- node_gini_index: {node_gini_index}")
@@ -139,6 +133,7 @@ class ClassificationTree(BaseTree):
                         print(
                             "Corresponding predicted value is :", node.predicted_value
                         )
+
         print(
             f"-----------------------------> Node selected for feature n° {node.column_index}: {node.splitting_point}"
         )
@@ -148,7 +143,7 @@ class ClassificationTree(BaseTree):
         print(
             f"-----------------------------> Length right child: {len(node.right_region)}"
         )
-        print(f"-----------------------------> Gini index : {gini_index}")
+        print(f"-----------------------------> Gini index : {parent_gini_index}")
         print(f"-----------------------------> Predicted value: {node.predicted_value}")
         print(f"-----------------------------> Is leaf: {node.is_leaf}")
         print("=" * 50 + "End of node creation" + "=" * 50)

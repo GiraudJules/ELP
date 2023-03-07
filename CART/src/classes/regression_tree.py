@@ -33,10 +33,13 @@ class RegressionTree(BaseTree):
             node.is_leaf = True
             node.predicted_value = data[data.columns[-1]].mean()
             return node
+        
+        parent_risk_value = self.mse(data.iloc[:,-1])
 
         risk_value = np.inf
         print(" Browsing all features ...")
-        for col_index in range(len(data.columns) - 2):
+        for col_index in range(len(data.columns) - 1):
+            print(data.columns[col_index])
             print("*" * 30 + f" Feature n°: {col_index} " + "*" * 30)
             data_sorted = data.sort_values(by=data.columns[col_index])
             for row_index in range(len(data_sorted) - 1):
@@ -97,7 +100,7 @@ class RegressionTree(BaseTree):
         print(
             f"-----------------------------> Length right child: {len(node.right_region)}"
         )
-        print(f"-----------------------------> Risk value: {risk_value}")
+        print(f"-----------------------------> Risk value: {parent_risk_value}")
         print(f"-----------------------------> Predicted value: {node.predicted_value}")
         print(f"-----------------------------> Is leaf: {node.is_leaf}")
         print("=" * 50 + "End of node creation" + "=" * 50)
