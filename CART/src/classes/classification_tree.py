@@ -3,6 +3,7 @@
 
 # Third party imports
 import numpy as np
+import pandas as pd
 from src.classes.base_tree import BaseTree
 from src.classes.node import Node
 
@@ -20,19 +21,34 @@ class ClassificationTree(BaseTree):
             float: The Gini index for the given dataset.
         """
         size = len(data)
+        if size == 0:
+            return 0
+        
         instances = np.zeros(len(self.classes))
+        target = data.iloc[:, -1].astype(int)
 
-        for row in data:
-            class_label = int(row[-1])
+        for class_label in target:
             instances[class_label] += 1
 
-        if size > 0:
-            squared_counts = [(val/size)**2 for val in instances]
-            gini = 1 - np.sum(squared_counts)
-        else:
-            gini = 1
+        # for _, row in data.iterrows():
+        #     print("Row:", row)
+        #     class_label = row[-1]
+        #     instances[class_label] += 1
 
-        return gini
+        gini_index = 1.0 - np.sum((instances / size) ** 2)
+
+        # for row in data[1:]:
+        #     print("Row:", row)
+        #     class_label = int(row[-1])
+        #     instances[class_label] += 1
+
+        # if size > 0:
+        #     squared_counts = [(val/size)**2 for val in instances]
+        #     gini = 1 - np.sum(squared_counts)
+        # else:
+        #     gini = 1
+
+        return gini_index
 
     def calculate_gini_index(self, child):
         """Calculate the weighted Gini index for a given split.
@@ -66,6 +82,23 @@ class ClassificationTree(BaseTree):
         """
         labels = [row[-1] for row in data]
         return max(set(labels), key=labels.count)
+    
+    def count_labels(self, data):
+        """
+        Returns a dictionary containing the count of each class label in the given dataset.
+
+        Args:
+            data (list): List of lists, where each inner list represents a data point, and the last element of each inner
+                list represents the class label.
+
+        Returns:
+            dict: A dictionary containing the count of each class label in the given dataset.
+        """
+        labels = [row[-1] for row in data]
+        label_count = []
+        for label in set(labels):
+            label_count[label] = labels.count(label)
+        return label_count
     
     def create_node(self, data) -> Node:
         """
@@ -120,7 +153,6 @@ class ClassificationTree(BaseTree):
                         node.splitting_point = splitting_value
                         # Index of the feature X
                         node.column_index = col_index
-
                         # Set of predicted value for this node
                         node.predicted_value = self.most_common_label(child)
                         # Set of X/y which go to left and right
@@ -140,7 +172,7 @@ class ClassificationTree(BaseTree):
         print(
             f"-----------------------------> Length right child: {len(node.right_region)}"
         )
-        print(f"-----------------------------> Risk value: {gini_index}")
+        print(f"-----------------------------> Gini index : {gini_index}")
         print(f"-----------------------------> Predicted value: {node.predicted_value}")
         print(f"-----------------------------> Is leaf: {node.is_leaf}")
         print("=" * 50 + "End of node creation" + "=" * 50)
