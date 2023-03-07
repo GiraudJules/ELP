@@ -23,43 +23,37 @@ class RegressionTree(BaseTree):
         Returns:
             Node(): new node
         """
-        print("=" * 50 + "Creating new node..." + "=" * 50)
         node = Node(None)
-        print(f"Lenght of data: {len(data)}")
 
         ### Check if node has enough samples to be split again
         if len(data) <= self.min_sample_split:
-            print("Stopping Criterion : Min Sample Split")
             node.is_leaf = True
             node.predicted_value = data[data.columns[-1]].mean()
             return node
 
         risk_value = np.inf
-        print(" Browsing all features ...")
+
         for col_index in range(len(data.columns) - 2):
-            print("*" * 30 + f" Feature n°: {col_index} " + "*" * 30)
+
             data_sorted = data.sort_values(by=data.columns[col_index])
             for row_index in range(len(data_sorted) - 1):
-                print("*" * 20 + f" Row index: {row_index} " + "*" * 20)
+
                 splitting_value = (
                     data_sorted.iloc[row_index][col_index]
                     + data_sorted.iloc[row_index + 1][col_index]
                 ) / 2
-                print(f" ---> Splitting point: {splitting_value}")
+
                 child = self.split_dataset(data_sorted, col_index, splitting_value)
-                print(f"- len_left_child: {len(child['left'])}")
-                print(f"- len_right_child: {len(child['right'])}")
 
                 if (len(child["left"]) >= self.min_sample_leaf) and (
                     len(child["right"]) >= self.min_sample_leaf
                 ):
 
-                    print(" ======> Enough samples to split")
                     candidate_risk_value = self.risk_regression(child)
-                    print(f"- candidate_risk_value: {candidate_risk_value}")
+
                     # If it is current lowest MSE, we update the node
                     if candidate_risk_value < risk_value:
-                        print(" /!\ BEST Risk Value ====> Updating node")
+
                         risk_value = candidate_risk_value
 
                         ## Update the node
@@ -76,31 +70,14 @@ class RegressionTree(BaseTree):
                         node.right_region = child["right"]
                         # We set that the node is not a leaf
                         node.is_leaf = False
-                        print(
-                            "Corresponding predicted value is :", node.predicted_value
-                        )
 
                 # else:
-                #     print(" ======> Not enough samples to split, setting node as LEAF")
+                #
                 #     # Set of X/y which go to left and right
                 #     node.left_region = child["left"]
                 #     node.right_region = child["right"]
                 #     node.is_leaf = True
-                #     print("Stopping Criterion : Min Sample Leaf")
-
-        print(
-            f"-----------------------------> Node selected for feature n° {node.column_index}: {node.splitting_point}"
-        )
-        print(
-            f"-----------------------------> Length left child: {len(node.left_region)}"
-        )
-        print(
-            f"-----------------------------> Length right child: {len(node.right_region)}"
-        )
-        print(f"-----------------------------> Risk value: {risk_value}")
-        print(f"-----------------------------> Predicted value: {node.predicted_value}")
-        print(f"-----------------------------> Is leaf: {node.is_leaf}")
-        print("=" * 50 + "End of node creation" + "=" * 50)
+                #
 
         return node
 

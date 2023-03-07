@@ -102,7 +102,7 @@ class BaseTree:
             "and right :",
             len(node.right_region),
         )
-        print("Node has been splitted on feature X_{}".format(node.column_index))
+        print(f"Node has been splitted on feature X_{node.column_index}")
 
         # Assert if current depth is less than max depth
         if (current_depth < self.max_depth) and (node.is_leaf is False):
