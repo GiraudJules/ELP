@@ -94,11 +94,18 @@ class ClassificationTree(BaseTree):
         Returns:
             dict: A dictionary containing the count of each class label in the given dataset.
         """
-        labels = [row[-1] for row in data]
-        label_count = []
-        for label in set(labels):
-            label_count[label] = labels.count(label)
-        return label_count
+        # labels = [row[-1] for row in data]
+        # label_count = []
+        # for label in set(labels):
+        #     label_count[label] = labels.count(label)
+        # return label_count
+        instances = [0] * len(self.classes)
+        target = data.iloc[:, -1].astype(int)
+
+        for class_label in target:
+            instances[class_label] += 1
+
+        return instances
     
     def create_node(self, data) -> Node:
         """
@@ -154,7 +161,8 @@ class ClassificationTree(BaseTree):
                         # Index of the feature X
                         node.column_index = col_index
                         # Set of predicted value for this node
-                        node.predicted_value = self.most_common_label(child)
+                        #node.predicted_value = self.most_common_label(child)
+                        node.predicted_value = self.count_labels(data)
                         # Set of X/y which go to left and right
                         node.left_region = child["left"]
                         node.right_region = child["right"]
