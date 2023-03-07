@@ -10,6 +10,7 @@ from src.classes.node import Node
 class ClassificationTree(BaseTree):
     def __init__(self, min_sample_leaf, max_depth, min_sample_split) -> None:
         super().__init__(min_sample_leaf, max_depth, min_sample_split)
+        self.lendf = None
 
     def gini_index(self, data):
         """Calculate the Gini index for a given dataset.
@@ -30,23 +31,7 @@ class ClassificationTree(BaseTree):
         for class_label in target:
             instances[class_label] += 1
 
-        # for _, row in data.iterrows():
-        #     print("Row:", row)
-        #     class_label = row[-1]
-        #     instances[class_label] += 1
-
         gini_index = 1.0 - np.sum((instances / size) ** 2)
-
-        # for row in data[1:]:
-        #     print("Row:", row)
-        #     class_label = int(row[-1])
-        #     instances[class_label] += 1
-
-        # if size > 0:
-        #     squared_counts = [(val/size)**2 for val in instances]
-        #     gini = 1 - np.sum(squared_counts)
-        # else:
-        #     gini = 1
 
         return gini_index
 
@@ -62,26 +47,13 @@ class ClassificationTree(BaseTree):
         group_size = [len(child['left']), len(child['right'])]
         left_gini = self.gini_index(child['left'])
         right_gini =  self.gini_index(child['right'])
-
+        
         weight_left = group_size[0] / np.sum(group_size)
         weight_right = group_size[1] / np.sum(group_size)
+
         weighted_gini = weight_left * left_gini + weight_right * right_gini
 
         return weighted_gini
-    
-    def most_common_label(self, data):
-        """
-        Returns the most common class label in the given dataset.
-
-        Args:
-            data (list): List of lists, where each inner list represents a data point, and the last element of each inner
-                list represents the class label.
-
-        Returns:
-            int: The most common class label in the given dataset.
-        """
-        labels = [row[-1] for row in data]
-        return max(set(labels), key=labels.count)
     
     def count_labels(self, data):
         """
@@ -94,11 +66,6 @@ class ClassificationTree(BaseTree):
         Returns:
             dict: A dictionary containing the count of each class label in the given dataset.
         """
-        # labels = [row[-1] for row in data]
-        # label_count = []
-        # for label in set(labels):
-        #     label_count[label] = labels.count(label)
-        # return label_count
         instances = [0] * len(self.classes)
         target = data.iloc[:, -1].astype(int)
 
@@ -128,7 +95,8 @@ class ClassificationTree(BaseTree):
             node.predicted_value = data[data.columns[-1]].mean()
             return node
         
-        gini_index = 1.0
+        gini_index = 1
+
         print(" Browsing all features ...")
 
         for col_index in range(len(data.columns) - 2):
@@ -186,49 +154,3 @@ class ClassificationTree(BaseTree):
         print("=" * 50 + "End of node creation" + "=" * 50)
 
         return node
-
-
-    # def create_node(self, data) -> Node:
-    #     """Create a new node of the classification tree.
-
-    #     Args:
-    #         data (numpy.ndarray): The dataset to split.
-
-    #     Returns:
-    #         Node: The created node.
-    #     """
-
-    #     print("=" * 50 + "Creating new node..." + "=" * 50)
-    #     node = Node(None)
-    #     print(f"Lenght of data: {len(data)}")
-        
-    #     gini = self.gini_index(data)
-
-    #     # Check if node has enough samples to be split again
-    #     if len(data) <= self.min_sample_split:
-    #         node.is_leaf = True
-    #         target_values = [row[-1] for row in data]
-    #         node.value = np.bincount(target_values).argmax()
-    #         node.gini_value = gini
-    #         return node
-
-    #     gini_index = 1.0
-
-    #     for col_index in range(len(data[0])-1):
-    #         for row_index in range(len(data)):
-    #             value = data[row_index][col_index]
-    #             child = self.split_dataset(data, col_index, value)
-
-    #             # Check the minimum number of samples required to be at a leaf node
-    #             if (len(child['left']) >= self.min_sample_leaf & len(child['right']) >= self.min_sample_leaf):
-    #                 node_gini_index = self.calculate_gini_index(child)
-
-    #                 if node_gini_index < gini_index:
-    #                     gini_index = node_gini_index
-    #                     node.value = value
-    #                     node.gini_value = node_gini_index
-    #                     node.column_index = col_index
-    #                     node.left_region = child['left']
-    #                     node.right_region = child['right']
-
-    #     return node
