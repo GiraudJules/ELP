@@ -31,11 +31,9 @@ class RegressionTree(BaseTree):
             node.predicted_value = data[data.columns[-1]].mean()
             return node
         
-        parent_risk_value = self.mse(data.iloc[:,-1])
-
         risk_value = np.inf
 
-        for col_index in range(len(data.columns) - 2):
+        for col_index in range(len(data.columns) - 1):
 
             data_sorted = data.sort_values(by=data.columns[col_index])
             for row_index in range(len(data_sorted) - 1):
