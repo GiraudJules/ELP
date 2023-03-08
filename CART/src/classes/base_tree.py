@@ -1,6 +1,6 @@
 # Standard library imports
 from abc import abstractmethod
-from typing import Union, Dict, List
+from typing import Union, Dict
 
 # Third party imports
 import numpy as np
@@ -24,25 +24,19 @@ class BaseTree:
         self.classes = None
 
     def fit(self, dataframe: pd.DataFrame) -> Node:
-        """
-        - Retrieves the different classes from X_features and stores it into self.classes
-        - Assign new value to self.node with self.create_node
-        - Build the tree from new root and current_depth
+        """ Build the tree from new root and current_depth
 
         Args:
-            X_features (np.array): X features from dataset
-            y_features (np.array): y features from dataset
+            dataframe (pd.DataFrame): Train dataset to fit the DecisionTree on
 
         Returns:
-            self.root: new Node of the tree
+            self.root: New root Node of the tree
         """
         # Retrieve the different classes from X_features and store it into self.classes
         self.classes = list(set(int(row[-1]) for row in dataframe.values))
 
         # Assign new value to self.node with self.create_node
         self.root = self.create_node(dataframe)
-
-        print("Root node created !")
 
         # Build the tree from new root and current_depth
         self.build_tree(self.root, current_depth=0)
@@ -51,7 +45,7 @@ class BaseTree:
         return self.root
 
     def predict(
-        self, X_test: Union[Union[int, str], np.array]
+        self, test_data: pd.DataFrame
     ) -> Union[Union[int, str], np.array]:
         """
         Predict class for whether:
@@ -59,7 +53,7 @@ class BaseTree:
         - Classification: a single str OR multiple str
 
         Args:
-            X_test (Union[Union[int,str],np.array]): test features to predict on
+            X_test (pd.DataFrame): Test dataset to predict on
 
         Returns:
             Union[Union[int, str], np.array]: whether a single int or str; or np.array
@@ -67,7 +61,7 @@ class BaseTree:
         """
         predictions = []
 
-        for row in X_test.values:
+        for row in test_data.values:
 
             node = self.root
 
@@ -96,52 +90,36 @@ class BaseTree:
             None
         """
 
-        print(
-            "Node has left :",
-            len(node.left_region),
-            "and right :",
-            len(node.right_region),
-        )
-        print(f"Node has been splitted on feature X_{node.column_index}")
-
         # Assert if current depth is less than max depth
         if (current_depth < self.max_depth) and (node.is_leaf is False):
-            print("Let's create the left child")
             # If left child is a list
             if node.left_region is not None:
                 assert isinstance(
                     node.left_region, pd.DataFrame
                 ), "Node child must be of type <pd.DataFrame>"
+
                 # Instanciate a new node from left child
-                print("Create a node with :", len(node.left_region))
                 left_node = self.create_node(node.left_region)
                 node.left_child_node = left_node
-                print(left_node.is_leaf)
+
                 # While left node is not a leaf, build the tree
                 if left_node.is_leaf is not True:
                     self.build_tree(left_node, current_depth + 1)
-                    print("Building tree from left child")
-                else:
-                    print("Left node child is a leaf")
 
-            print("Let's create the right child")
             # If right child is a list
             if node.right_region is not None:
                 assert isinstance(
                     node.right_region, pd.DataFrame
                 ), "Node child must be of type <pd.DataFrame>"
+
                 # Instanciate a new node from right child
                 right_node = self.create_node(node.right_region)
                 node.right_child_node = right_node
-                print(right_node.is_leaf)
+
                 # While left node is not a leaf, build the tree
                 if right_node.is_leaf is not True:
                     self.build_tree(right_node, current_depth + 1)
-                    print("Building tree from right child")
-                else:
-                    print("Right node child is a leaf")
         else:
-            print("Node is leaf, stopping developing tree")
             node.is_leaf = True
 
     @staticmethod

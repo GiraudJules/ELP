@@ -1,91 +1,135 @@
-# Standard library imports
-
-
 # Third party imports
 import numpy as np
-from base_tree import BaseTree
-from node import Node
+import pandas as pd
+from src.classes.base_tree import BaseTree
+from src.classes.node import Node
 
 class ClassificationTree(BaseTree):
-    def __init__(self, min_gini) -> None:
-        super().__init__()
-        self.min_gini = min_gini
+    """ Class to build a Classification Tree.
+    
+    Args:
+        BaseTree (class)
+    """
+    def __init__(self, min_sample_leaf, max_depth, min_sample_split) -> None:
+        super().__init__(min_sample_leaf, max_depth, min_sample_split)
+        self.min_sample_leaf = min_sample_leaf
+        self.max_depth = max_depth
+        self.min_sample_split = min_sample_split
 
-    def gini_index(self, data):
+    def gini_index(self, data: pd.DataFrame) -> np.float64:
         """Calculate the Gini index for a given dataset.
 
         Args:
-            y (_type_): The target values of the dataset.
+            data (pd.DataFrame): Dataframe representing the child samples
 
         Returns:
-            float: The Gini index for the given dataset.
+            np.float64: The Gini index for the given dataset.
         """
         size = len(data)
-        instances = np.zeros(len(self.classes))
+        instances = np.array(data.groupby(data.columns[-1]).size())
 
-        for row in data:
-            class_label = int(row[-1])
-            instances[class_label] += 1
+        gini_index = 1.0 - np.sum((instances / size) ** 2)
+        return gini_index
 
-        if size > 0:
-            squared_counts = [(val/size)**2 for val in instances]
-            gini = 1 - np.sum(squared_counts)
-        else:
-            gini = 1
-
-        return gini
-
-    def calculate_gini_index(self, child):
+    def weighted_gini_index(self, child: dict) -> np.float64:
         """Calculate the weighted Gini index for a given split.
 
         Args:
             child (dict): A dictionary containing the left and right child nodes resulting from a split.
 
         Returns:
-            float: The weighted Gini index for the given split.
+            np.float64: The weighted Gini index for the given split.
         """
         group_size = [len(child['left']), len(child['right'])]
+
         left_gini = self.gini_index(child['left'])
         right_gini =  self.gini_index(child['right'])
 
         weight_left = group_size[0] / np.sum(group_size)
         weight_right = group_size[1] / np.sum(group_size)
+
         weighted_gini = weight_left * left_gini + weight_right * right_gini
 
         return weighted_gini
 
-    def create_node(self, data):
-        """Create a node of the decision tree.
+    def majority_vote(self, data: pd.DataFrame) -> int:
+        """Return the class index (y) of the class which have the most samples in a node
 
         Args:
-            data (numpy.ndarray): The dataset to split.
+            data (pd.DataFrame): Dataframe representing the node samples
 
         Returns:
-            Node: The created node.
+            int: Class index
+        """
+        instances = [0] * len(self.classes)
+        target = data.iloc[:, -1].astype(int)
+
+        for class_label in target:
+            instances[class_label] += 1
+
+        y_pred = instances.index(max(instances))
+
+        return y_pred
+
+    def create_node(self, data) -> Node:
+        """
+        Create a new node
+
+        Args:
+            data (list): List of X and y features for the left or right child of the node
+
+        Returns:
+            Node: New node
         """
         node = Node(None)
-        gini = self.gini_index(data)
 
+        # Check if node has enough samples to be split again
         if len(data) <= self.min_sample_split:
             node.is_leaf = True
-            target_values = [row[-1] for row in data]
-            node.value = np.bincount(target_values).argmax()
-            node.gini_value = gini
+            node.predicted_value = self.majority_vote(data)
             return node
 
-        gini_index = 1.0
-        for col_index in range(len(data[0])-1):
-            for row_index in range(len(data)):
-                value = data[row_index][col_index]
-                child = self.split_dataset(data, col_index, value)
-                node_gini_index = self.calculate_gini_index(child)
+        gini_index = 1
 
-                if node_gini_index < gini_index:
-                    gini_index = node_gini_index
-                    node.value = value
-                    node.gini_value = node_gini_index
-                    node.col_index = col_index
-                    node.left = child['left']
-                    node.right = child['right']
+        for col_index in range(len(data.columns) - 1):
+
+            data_sorted = data.sort_values(by=data.columns[col_index])
+            for row_index in range(len(data_sorted) - 1):
+
+                splitting_value = (
+                    data_sorted.iloc[row_index][col_index]
+                    + data_sorted.iloc[row_index + 1][col_index]
+                ) / 2
+
+                child = self.split_dataset(data_sorted, col_index, splitting_value)
+
+                # Check the minimum number of samples required to be at a leaf node
+                if (len(child["left"]) >= self.min_sample_leaf) and (
+                    len(child["right"]) >= self.min_sample_leaf
+                ):
+
+                    candidate_gini_index = self.weighted_gini_index(child)
+
+                    # If it is current lowest Gini index, we update the node
+                    if candidate_gini_index < gini_index:
+
+                        gini_index = candidate_gini_index
+
+                        ## Update the node
+                        # Which value to separate data
+                        node.splitting_point = splitting_value
+
+                        # Index of the feature X
+                        node.column_index = col_index
+
+                        # Set of predicted value for this node
+                        node.predicted_value = self.majority_vote(data)
+
+                        # Set of X/y which go to left and right
+                        node.left_region = child["left"]
+                        node.right_region = child["right"]
+
+                        # We set that the node is not a leaf
+                        node.is_leaf = False
 
         return node
