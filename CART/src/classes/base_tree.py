@@ -1,6 +1,6 @@
 # Standard library imports
 from abc import abstractmethod
-from typing import Union, Dict, List
+from typing import Union, Dict
 
 # Third party imports
 import numpy as np

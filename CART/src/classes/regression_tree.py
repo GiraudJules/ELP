@@ -1,12 +1,16 @@
 import numpy as np
 import pandas as pd
 
-from typing import Union, List
 from src.classes.base_tree import BaseTree
 from src.classes.node import Node
 
 
 class RegressionTree(BaseTree):
+    """Class to build a Regression Tree.
+
+    Args:
+        BaseTree (class)
+    """
     def __init__(self, min_sample_leaf, min_sample_split, max_depth) -> None:
         super().__init__(self, min_sample_leaf, min_sample_split)
         self.min_sample_leaf = min_sample_leaf
@@ -30,7 +34,7 @@ class RegressionTree(BaseTree):
             node.is_leaf = True
             node.predicted_value = data[data.columns[-1]].mean()
             return node
-        
+
         risk_value = np.inf
 
         for col_index in range(len(data.columns) - 1):
