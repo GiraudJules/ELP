@@ -13,12 +13,12 @@ class RegressionTree(BaseTree):
         self.min_sample_split = min_sample_split
         self.max_depth = max_depth
 
-    def create_node(self, data) -> Node:
+    def create_node(self, data: pd.DataFrame) -> Node:
         """
-        Create a new node
+        Create a new node from left or right region (dataframe).
 
         Args:
-            data (list): List of X and y features for the left or right child of the node
+            data (pd.DataFrame): List of X and y features for the left or right child of the node
 
         Returns:
             Node(): new node
@@ -71,37 +71,19 @@ class RegressionTree(BaseTree):
                         # We set that the node is not a leaf
                         node.is_leaf = False
 
-                # else:
-                #
-                #     # Set of X/y which go to left and right
-                #     node.left_region = child["left"]
-                #     node.right_region = child["right"]
-                #     node.is_leaf = True
-                #
-
         return node
 
-    def sort_data(self, X: np.array, y: np.array) -> tuple:
-        """Sort data in order to try every split candidates
-
-        Args:
-            X (np.array): Xth feature
-            y (np.array)
-
-        Returns:
-            tuple: Outputs sorted data
-        """
-        X_sorted, y_sorted = (list(t) for t in zip(*sorted(zip(X, y))))
-        return X_sorted, y_sorted
-
     def mse(self, y: pd.DataFrame) -> np.float64:
-        """Compute Mean Square Error from the average of a given region R
+        """
+        Computes Mean Square Error between:
+            - y: the target of a given region for a child node
+            - y_mean: the PREDICTED VALUE, i.e. the average of all the targets of the region
 
         Args:
-            y (Union[np.array, List]): Given region R (left or right)
+            y (pd.DataFrame): target values for given region R (left or right)
 
         Returns:
-            float: MSE
+            mse (np.float64): MSE value
         """
         y_mean = y.mean()
         mse = np.square(y - y_mean).mean()

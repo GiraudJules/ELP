@@ -166,7 +166,7 @@ class BaseTree:
         right_region = pd.DataFrame()
 
         # Iterate over dataset to split
-        for i, val in enumerate(dataframe.values):
+        for i, _ in enumerate(dataframe.values):
 
             # If value is less than or equal to splitting point, append to left child
             if dataframe.iloc[i, column_index] <= splitting_point:
@@ -186,14 +186,15 @@ class BaseTree:
         return {"left": left_region.T, "right": right_region.T}
 
     @abstractmethod
-    def create_node(self, data: list) -> Node:
+    def create_node(self, data: pd.DataFrame) -> Node:
         """
-        Create a new node
+        Abstract method to be implemented in specific child classes.
+        Creates a new node from left or right region (dataframe).
 
         Args:
-            data (np.array): X and y features for the left or right child of the node
+            data (pd.DataFrame): X and y features for the left or right child of the node
 
-        Returns:
-            Node(): new node
+        Raises:
+            NotImplementedError: abstract method
         """
         raise NotImplementedError
