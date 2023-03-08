@@ -42,6 +42,8 @@ class BaseTree:
         # Assign new value to self.node with self.create_node
         self.root = self.create_node(dataframe)
 
+        print("Root node created !")
+
         # Build the tree from new root and current_depth
         self.build_tree(self.root, current_depth=0)
 
@@ -63,8 +65,24 @@ class BaseTree:
             Union[Union[int, str], np.array]: whether a single int or str; or np.array
 
         """
+        predictions = []
 
-        raise NotImplementedError
+        for row in X_test.values:
+
+            node = self.root
+
+            while node.is_leaf is not True:
+
+                if row[node.column_index] <= node.splitting_point:
+                    node = node.left_child_node
+                    continue
+
+                if row[node.column_index] > node.splitting_point:
+                    node = node.right_child_node
+
+            predictions.append(node.predicted_value)
+
+        return predictions
 
     def build_tree(self, node: Node, current_depth: int) -> None:
         """
@@ -77,28 +95,57 @@ class BaseTree:
         Returns:
             None
         """
+
+        print(
+            "Node has left :",
+            len(node.left_region),
+            "and right :",
+            len(node.right_region),
+        )
+        print(f"Node has been splitted on feature X_{node.column_index}")
+
         # Assert if current depth is less than max depth
-        if current_depth < self.max_depth:
+        if (current_depth < self.max_depth) and (node.is_leaf is False):
+            print("Let's create the left child")
             # If left child is a list
-            if node.left_child is not None and isinstance(node.left_child, list):
+            if node.left_region is not None:
+                assert isinstance(
+                    node.left_region, pd.DataFrame
+                ), "Node child must be of type <pd.DataFrame>"
                 # Instanciate a new node from left child
-                left_node = self.create_node(node.left_child)
-                node.left_child = left_node
+                print("Create a node with :", len(node.left_region))
+                left_node = self.create_node(node.left_region)
+                node.left_child_node = left_node
+                print(left_node.is_leaf)
                 # While left node is not a leaf, build the tree
-                if node.left_child.is_leaf is not True:
-                    self.build_tree(node.left_child, current_depth + 1)
+                if left_node.is_leaf is not True:
+                    self.build_tree(left_node, current_depth + 1)
+                    print("Building tree from left child")
+                else:
+                    print("Left node child is a leaf")
 
+            print("Let's create the right child")
             # If right child is a list
-            if node.right_child is not None and isinstance(node.right_child, list):
+            if node.right_region is not None:
+                assert isinstance(
+                    node.right_region, pd.DataFrame
+                ), "Node child must be of type <pd.DataFrame>"
                 # Instanciate a new node from right child
-                right_node = self.create_node(node.right_child)
-                node.right_child = right_node
+                right_node = self.create_node(node.right_region)
+                node.right_child_node = right_node
+                print(right_node.is_leaf)
                 # While left node is not a leaf, build the tree
-                if node.right_child.is_leaf is not True:
-                    self.build_tree(node.right_child, current_depth + 1)
+                if right_node.is_leaf is not True:
+                    self.build_tree(right_node, current_depth + 1)
+                    print("Building tree from right child")
+                else:
+                    print("Right node child is a leaf")
+        else:
+            print("Node is leaf, stopping developing tree")
+            node.is_leaf = True
 
+    @staticmethod
     def split_dataset(
-        self,
         dataframe: pd.DataFrame,
         column_index: int,
         splitting_point: float,
@@ -115,38 +162,39 @@ class BaseTree:
             Dict[str:pd.DataFrame, str: pd.DataFrame]: dictionary with left and right datasets
         """
         # Instanciante empty dataframes
-        left_child = pd.DataFrame()
-        right_child = pd.DataFrame()
+        left_region = pd.DataFrame()
+        right_region = pd.DataFrame()
 
         # Iterate over dataset to split
-        for i, val in enumerate(dataframe.values):
+        for i, _ in enumerate(dataframe.values):
 
             # If value is less than or equal to splitting point, append to left child
             if dataframe.iloc[i, column_index] <= splitting_point:
                 # Concatenate new value to dataframe
-                left_child = pd.concat(
-                    [left_child, dataframe.iloc[i, :]], axis=1, ignore_index=True
+                left_region = pd.concat(
+                    [left_region, dataframe.iloc[i, :]], axis=1, ignore_index=True
                 )
 
             # If value is greater than splitting point, append to right child
-            if dataframe.iloc[i, column_index] > splitting_point:
+            elif dataframe.iloc[i, column_index] > splitting_point:
                 # Concatenate new value to dataframe
-                right_child = pd.concat(
-                    [right_child, dataframe.iloc[i, :]], axis=1, ignore_index=True
+                right_region = pd.concat(
+                    [right_region, dataframe.iloc[i, :]], axis=1, ignore_index=True
                 )
 
         # Return dictionary with left and right child
-        return {"left": left_child.T, "right": right_child.T}
+        return {"left": left_region.T, "right": right_region.T}
 
     @abstractmethod
-    def create_node(self, data: list) -> Node:
+    def create_node(self, data: pd.DataFrame) -> Node:
         """
-        Create a new node
+        Abstract method to be implemented in specific child classes.
+        Creates a new node from left or right region (dataframe).
 
         Args:
-            data (np.array): X and y features for the left or right child of the node
+            data (pd.DataFrame): X and y features for the left or right child of the node
 
-        Returns:
-            Node(): new node
+        Raises:
+            NotImplementedError: abstract method
         """
         raise NotImplementedError
