@@ -1,11 +1,9 @@
 #####################
 #This Python file contains helper functions to be used to create Boosting models.
-#Author: Amandine Allmang
 ######################
 
 import numpy as np
 import pandas as pd
-from utils import eval 
 from xgboost import XGBRegressor
 from sklearn.ensemble import AdaBoostRegressor, GradientBoostingRegressor
 from utils import search_parameters, splits, eval
