@@ -125,7 +125,7 @@ def print_score_dict(score_dict):
      
 
 
-def eval(model, X, y, n_folds=5, scores = ['r2', 'neg_mean_absolute_error', 'neg_root_mean_squared_error']):
+def eval(model, X, y, n_folds=5, scores = ['neg_mean_absolute_error', 'neg_root_mean_squared_error']):
     '''
     The purpose of the function is to evaluate and display the performance of our model on the train and test sets. 
     Input:
@@ -133,7 +133,7 @@ def eval(model, X, y, n_folds=5, scores = ['r2', 'neg_mean_absolute_error', 'neg
         - X, y: Training data and the associated labels
         - n_folds: The number of folds for the K-Fold cross validation. If no number is specified, the default is 5.
         - scores: A list of metrics we want to looks at. If none are specified by the user, these will be 
-          the R2 score, the mean absolute error and the root mean squared error. 
+          the mean absolute error and the root mean squared error. 
 
     Output:
         - sc: A dictionnary containing the training and test score for all metrics given as input on the given model.
