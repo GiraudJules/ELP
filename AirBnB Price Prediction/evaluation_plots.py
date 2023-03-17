@@ -8,14 +8,19 @@ import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
 
+#####################
+#Version of the plots using graph_objects
+#####################
+
 #SCATTER PLOT FUNCTION
-def scatter_plot(model_name, y_test, y_pred):
+def scatter_plot_graph(model_name, y_test, y_pred):
     '''
     The purpose of the function is to make a scatter plot to compare the ground truth y values and the predicted y values for a given model.
+    This function uses graph_objects (may not be visible on some notebooks)
     Input:
-        - The name of the model we are analysing 
-        - The ground truth output values (y_test)
-        - The predicted output values made by the model (y_pred)
+        - model_name: The name of the model we are analysing 
+        - y_test: The ground truth output values (y_test)
+        - y_pred: The predicted output values made by the model (y_pred)
     '''
     #creating a Scatter object to make the scatter plot
     trace = go.Scatter(
@@ -38,15 +43,16 @@ def scatter_plot(model_name, y_test, y_pred):
     fig.show()
 
 #HISTOGRAM FUNCTION
-def hist_plot(model_name, y_test, y_pred):
+def hist_plot_graph(model_name, y_test, y_pred):
     '''
     The purpose of the function is to make a histogram plot to compare the ground truth y values and the predicted y values for a given model.
+    This function uses graph_objects (may not be visible on some notebooks)
     Input:
-        - The name of the model we are analysing 
-        - The ground truth output values (y_test)
-        - The predicted output values made by the model (y_pred)
+        - model_name: The name of the model we are analysing 
+        - y_test: The ground truth output values (y_test)
+        - y_pred: The predicted output values made by the model (y_pred)
     '''
-    #compuuting the error for each prediction
+    #computing the error for each prediction
     error = (y_pred - y_test)
 
     #creating a Histogram object
@@ -66,7 +72,16 @@ def hist_plot(model_name, y_test, y_pred):
     fig.show()
 
 #BAR PLOT FOR ERRORS FUNCTION
-def bar_plot_error(model, model_name, y_test, y_pred):
+def bar_plot_error_graph(model, model_name, y_test, y_pred):
+        '''
+    The purpose of the function is to make a bar plot to compare the ground truth y values and the predicted y values for 20 observations.
+    This function uses graph_objects (may not be visible on some notebooks)
+    Input:
+        - model: trained model 
+        - model_name: The name of the model we are analysing 
+        - y_test: The ground truth output values (y_test)
+        - y_pred: The predicted output values made by the model (y_pred)
+    '''
 
     #creating a dataframe with 20 y_test VS y_pred
     error_airbnb = pd.DataFrame({
@@ -94,32 +109,54 @@ def bar_plot_error(model, model_name, y_test, y_pred):
     #displaying figure
     fig.show()
 
-#FEATURE IMPORTANCE PLOT FUNCTION
-def plot_feature_importance(model, feature_names):
+    
+#####################
+#Version of the plots using Seaborn and matplotlib
+#####################
+
+#SCATTER PLOT FUNCTION
+def scatter_plot(model_name, y_test, y_pred):
     '''
-    This function allows to plot the feature importance of a given model
+    The purpose of the function is to make a scatter plot to compare the ground truth y values and the predicted y values for a given model.
     Input:
-        - An initialized model
-        - A list of feature names
+        - model_name: The name of the model we are analysing 
+        - y_test: The ground truth output values (y_test)
+        - y_pred: The predicted output values made by the model (y_pred)
     '''
-    #getting the feature importances from the model
-    importances = model.feature_importances_
-
-    #sorting feature importances in descending order
-    indices = importances.argsort()[::-1]
-
-    # matching feature names with feature importance order 
-    sorted_names = [feature_names[i] for i in indices]
-
-    #horizontal bar chart of feature importances
-    plt.barh(range(len(indices)), importances[indices], align='center')
-
-    #y-axis ticks to be feature names
-    plt.yticks(range(len(indices)), sorted_names)
-
-    #add labels
-    plt.xlabel('Relative Importance')
-    plt.title('Feature Importances')
-
-    #plot
+    # create a scatter plot
+    plt.figure(figsize=(8, 6))
+    sns.scatterplot(x=y_test, y=y_pred, alpha=0.5)
+    
+    # add plot information
+    plt.title('Scatter plot on test set for {} model'.format(model_name))
+    plt.xlabel('Ground truth y values')
+    plt.ylabel('Predicted y values')
+    
+    # display plot
     plt.show()
+
+#HISTOGRAM FUNCTION
+def hist_plot(model_name, y_test, y_pred):
+    '''
+    The purpose of the function is to make a histogram plot to compare the ground truth y values and the predicted y values for a given model.
+    Input:
+        - model_name: The name of the model we are analysing 
+        - y_test: The ground truth output values (y_test)
+        - y_pred: The predicted output values made by the model (y_pred)
+    '''
+    # calculate errors
+    error = y_pred - y_test
+
+    # create histogram plot
+    plt.figure(figsize=(8, 6))
+    sns.histplot(error, bins=50)
+
+    # add plot information
+    plt.title('Histogram for errors on test set for {} model'.format(model_name))
+    plt.xlabel('Error')
+    plt.ylabel('Frequency')
+    plt.xlim(-1500, 1500)
+    
+    # display plot
+    plt.show()
+
