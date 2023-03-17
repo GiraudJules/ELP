@@ -24,14 +24,14 @@ def scatter_plot(model_name, y_test, y_pred):
         name = 'Predicted vs Ground Truth'
         )
     
-    #creating a Layout object to contain the plot
+    #creating a Layout object to contain the plot information
     layout = go.Layout(
         title = 'Scatter plot on test set for {} model'.format(model_name),
         xaxis = dict(title = 'Ground truth y values'),
         yaxis = dict(title = 'Predicted y values')
         )
 
-    #creating a Figure object contianing the Scatter and the Layout
+    #creating a Figure object containing the Scatter and the Layout
     fig = go.Figure(data = trace, layout = layout)
 
     #displaying figure
@@ -78,13 +78,18 @@ def bar_plot_error(model, model_name, y_test, y_pred):
             go.Bar(name='Ground Truth', x=error_airbnb.index, y=error_airbnb['Ground Truth Values'])
             ]
     
+    #creating a Layout object
+    layout = go.Layout(
+        title='Test set: Predicted y vs Ground Truth y', 
+        xaxis_title='Observations', 
+        yaxis_title='Price'
+        )
+    
     #creating a Figure object containing the Bar objects
-    fig = go.Figure(data= bars)
+    fig = go.Figure(data= bars, layout=layout)
 
-    #modifying layout and title
+    #modifying layout
     fig.update_layout(barmode='group')
-    title = 'Test set: Predicted y vs Ground Truth y'
-    fig.update_layout(title=title)
 
     #displaying figure
     fig.show()

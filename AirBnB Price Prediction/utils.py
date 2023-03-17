@@ -4,7 +4,7 @@ Author: Marie Bouvard
 '''
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import RobustScaler, MinMaxScaler
 from sklearn.model_selection import  GridSearchCV
 from sklearn.model_selection import train_test_split, KFold, cross_validate
 
@@ -43,7 +43,7 @@ def preprocessing(df, to_drop = ['id','host_name','last_review', 'name', 'host_i
     return X, y
     
 
-def splits(X,y, test_size=0.2):
+def splits(X,y, test_size=0.2, y_preproc=False):
     '''
     This function takes data and the associated labels and splits it to create a training and a test set. 
 
@@ -51,6 +51,7 @@ def splits(X,y, test_size=0.2):
         - X: the data
         - y: the associated labels
         - test_size: a float between 0 and 1 representing the size of the test set. If not specified, it will be 0.2.
+        - y_preproc: a boolean for whether or not to preprocess the y values
     Outpust:
         - X_train, y_train: training data and the associated labels
         - X_test, y_test: test data and the associated labels
@@ -62,6 +63,12 @@ def splits(X,y, test_size=0.2):
     scaler = RobustScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.fit_transform(X_test)
+    
+    #if required: normalize y 
+    if y_preproc==True:
+        scaler_y = MinMaxScaler()
+        y_train = scaler_y.fit_transform(y_train)
+        y_test = scaler_y.fit_transform(y_test)
 
     return X_train, X_test, y_train, y_test
 
@@ -118,7 +125,7 @@ def print_score_dict(score_dict):
      
 
 
-def eval(model, X, y, n_folds=5, scores = ['r2', 'neg_mean_absolute_error', 'neg_root_mean_squared_error']):
+def eval(model, X, y, n_folds=5, scores = ['neg_mean_absolute_error', 'neg_root_mean_squared_error']):
     '''
     The purpose of the function is to evaluate and display the performance of our model on the train and test sets. 
     Input:
@@ -126,7 +133,7 @@ def eval(model, X, y, n_folds=5, scores = ['r2', 'neg_mean_absolute_error', 'neg
         - X, y: Training data and the associated labels
         - n_folds: The number of folds for the K-Fold cross validation. If no number is specified, the default is 5.
         - scores: A list of metrics we want to looks at. If none are specified by the user, these will be 
-          the R2 score, the mean absolute error and the root mean squared error. 
+          the mean absolute error and the root mean squared error. 
 
     Output:
         - sc: A dictionnary containing the training and test score for all metrics given as input on the given model.
