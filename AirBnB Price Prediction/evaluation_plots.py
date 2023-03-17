@@ -19,8 +19,8 @@ def scatter_plot_graph(model_name, y_test, y_pred):
     This function uses graph_objects (may not be visible on some notebooks)
     Input:
         - model_name: The name of the model we are analysing 
-        - y_test: The ground truth output values (y_test)
-        - y_pred: The predicted output values made by the model (y_pred)
+        - y_test: The ground truth output values
+        - y_pred: The predicted output values made by the model
     '''
     #creating a Scatter object to make the scatter plot
     trace = go.Scatter(
@@ -49,8 +49,8 @@ def hist_plot_graph(model_name, y_test, y_pred):
     This function uses graph_objects (may not be visible on some notebooks)
     Input:
         - model_name: The name of the model we are analysing 
-        - y_test: The ground truth output values (y_test)
-        - y_pred: The predicted output values made by the model (y_pred)
+        - y_test: The ground truth output values
+        - y_pred: The predicted output values made by the model
     '''
     #computing the error for each prediction
     error = (y_pred - y_test)
@@ -79,8 +79,8 @@ def bar_plot_error_graph(model, model_name, y_test, y_pred):
     Input:
         - model: trained model 
         - model_name: The name of the model we are analysing 
-        - y_test: The ground truth output values (y_test)
-        - y_pred: The predicted output values made by the model (y_pred)
+        - y_test: The ground truth output values
+        - y_pred: The predicted output values made by the model
     '''
 
     #creating a dataframe with 20 y_test VS y_pred
@@ -120,14 +120,14 @@ def scatter_plot(model_name, y_test, y_pred):
     The purpose of the function is to make a scatter plot to compare the ground truth y values and the predicted y values for a given model.
     Input:
         - model_name: The name of the model we are analysing 
-        - y_test: The ground truth output values (y_test)
-        - y_pred: The predicted output values made by the model (y_pred)
+        - y_test: The ground truth output values
+        - y_pred: The predicted output values made by the model
     '''
     # create a scatter plot
     plt.figure(figsize=(8, 6))
     sns.scatterplot(x=y_test, y=y_pred, alpha=0.5)
     
-    # add plot information
+    # add plot info
     plt.title('Scatter plot on test set for {} model'.format(model_name))
     plt.xlabel('Ground truth y values')
     plt.ylabel('Predicted y values')
@@ -141,8 +141,8 @@ def hist_plot(model_name, y_test, y_pred):
     The purpose of the function is to make a histogram plot to compare the ground truth y values and the predicted y values for a given model.
     Input:
         - model_name: The name of the model we are analysing 
-        - y_test: The ground truth output values (y_test)
-        - y_pred: The predicted output values made by the model (y_pred)
+        - y_test: The ground truth output values
+        - y_pred: The predicted output values made by the model
     '''
     # calculate errors
     error = y_pred - y_test
@@ -151,12 +151,40 @@ def hist_plot(model_name, y_test, y_pred):
     plt.figure(figsize=(8, 6))
     sns.histplot(error, bins=50)
 
-    # add plot information
+    # add plot info
     plt.title('Histogram for errors on test set for {} model'.format(model_name))
     plt.xlabel('Error')
     plt.ylabel('Frequency')
     plt.xlim(-1500, 1500)
     
+    # display plot
+    plt.show()
+ 
+def bar_plot_error(model_name, y_test, y_pred):
+    '''
+    The purpose of the function is to make a bar plot to compare the ground truth y values and the predicted y values for a given model.
+    Input:
+        - model_name: The name of the model we are analysing 
+        - y_test: The ground truth output values
+        - y_pred: The predicted output values made by the model
+    '''
+    # create dataframe with 20 y_test vs y_pred
+    error_airbnb = pd.DataFrame({
+        'Ground Truth Values': np.array(y_test).flatten(),
+        'Predicted Values': y_pred.flatten()
+        }).reset_index().head(20)
+
+    # create bar plot
+    plt.figure(figsize=(8, 6))
+    sns.barplot(x="index", y="Predicted Values", data=error_airbnb, color="blue", label="Predicted")
+    sns.barplot(x="index", y="Ground Truth Values", data=error_airbnb, color="red", label="Ground Truth", alpha=0.5)
+
+    # add plot info
+    plt.title("Test set: Predicted y vs Ground Truth y for {} model".format(model_name))
+    plt.xlabel("Observations")
+    plt.ylabel("Price")
+    plt.legend()
+
     # display plot
     plt.show()
 
