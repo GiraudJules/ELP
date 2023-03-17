@@ -15,23 +15,24 @@ from utils import search_parameters, splits, eval
 #                                    XGBoost Regressor                                   #
 #----------------------------------------------------------------------------------------#
 
-def create_xgboost(X, y, grid_search=False, params=None, metrics=None):
+def create_xgboost(X, y, grid_search=False, params=None, metrics=None, y_preproc=False):
     '''
     This function allows to create, evaluate and make predictions an XGBoost model for a regression task.
     Input:
-        - Input data
-        - Output labels
-        - Boolean to indicate whether or not to perform a GridSearchCV
-        - Dictionary of parameters to be used to initialized a model
-        - List of metrics to be passed as input in the evaluation helper function
+        - X: Input data
+        - y: Output labels
+        - grid_search: Boolean to indicate whether or not to perform a GridSearchCV
+        - params: Dictionary of parameters to be used to initialized a model
+        - metrics: List of metrics to be passed as input in the evaluation helper function
+        - y_preproc: a boolean to select if normalization of y is required
     Output:
-        - Fitted model
-        - Test output labels
-        - Prediction labels made by fitted model 
+        - xgb_reg: Fitted model
+        - y_test: Test output labels
+        - y_pred: Prediction labels made by fitted model 
     '''
 
     #creating training and test sets using split helper function
-    X_train, X_test, y_train, y_test = splits(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = splits(X, y, test_size=0.2, y_preproc=y_preproc)
 
     #CREATING MODEL:
     #Option 1: if grid_search = True is passed: launch a grid search
@@ -78,23 +79,24 @@ def create_xgboost(X, y, grid_search=False, params=None, metrics=None):
 #                                   Adaboost Regressor                                   #
 #----------------------------------------------------------------------------------------#
 
-def create_adaboost(X, y, grid_search=False, params=None, metrics=None):
+def create_adaboost(X, y, grid_search=False, params=None, metrics=None, y_preproc=False):
     '''
     This function allows to create, evaluate and make predictions an Adaboost model for a regression task.
     Input:
-        - Input data
-        - Output labels
-        - Boolean to indicate whether or not to perform a GridSearchCV
-        - Dictionary of parameters to be used to initialized a model
-        - List of metrics to be passed as input in the evaluation helper function
+        - X: Input data
+        - y: Output labels
+        - grid_search: Boolean to indicate whether or not to perform a GridSearchCV
+        - params: Dictionary of parameters to be used to initialized a model
+        - metrics:List of metrics to be passed as input in the evaluation helper function
+        - y_preproc: a boolean to select if normalization of y is required
     Output:
-        - Fitted model
-        - Test output labels
-        - Prediction labels made by fitted model 
+        - ada_reg: Fitted model
+        - y_test: Test output labels
+        - y_pred: Prediction labels made by fitted model 
     '''
 
     #creating training and test sets using split helper function
-    X_train, X_test, y_train, y_test = splits(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = splits(X, y, test_size=0.2, y_preproc=y_preproc)
 
     #CREATING MODEL:
     #Option 1: if grid_search = True is passed: launch a grid search
@@ -139,23 +141,24 @@ def create_adaboost(X, y, grid_search=False, params=None, metrics=None):
 #                              Gradient Boosting Regressor                               #
 #----------------------------------------------------------------------------------------#
 
-def create_gradboost(X, y, grid_search=False, params=None, metrics=None):
+def create_gradboost(X, y, grid_search=False, params=None, metrics=None, y_preproc=False):
     '''
     This function allows to create, evaluate and make predictions a Gradient Boosting model for a regression task.
     Input:
-        - Input data
-        - Output labels
-        - Boolean to indicate whether or not to perform a GridSearchCV
-        - Dictionary of parameters to be used to initialized a model
-        - List of metrics to be passed as input in the evaluation helper function
+        - X: Input data
+        - y: Output labels
+        - grid_search: Boolean to indicate whether or not to perform a GridSearchCV
+        - params: Dictionary of parameters to be used to initialized a model
+        - metrics: List of metrics to be passed as input in the evaluation helper function
+        - y_preproc: a boolean to select if normalization of y is required
     Output:
-        - Fitted model
-        - Test output labels
-        - Prediction labels made by fitted model 
+        - grad_reg: Fitted model
+        - y_test: Test output labels
+        - y_pred: Prediction labels made by fitted model 
     '''
 
     #creating training and test sets using split helper function
-    X_train, X_test, y_train, y_test = splits(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = splits(X, y, test_size=0.2, y_preproc=y_preproc)
 
     #CREATING MODEL:
     #Option 1: if grid_search = True is passed: launch a grid search
