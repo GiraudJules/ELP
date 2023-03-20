@@ -1,6 +1,5 @@
 '''
 A python file to create different types of bagging methods.
-Author: Marie Bouvard
 '''
 import numpy as np
 import pandas as pd
@@ -178,6 +177,7 @@ def create_an_extremely_randomized_forest(X, y, grid_search=False, params=None, 
     else:
         extra_random_forest_scores = eval(extra_random_forest, X, y, scores=metrics)
 
+    extra_random_forest.fit(X_train, y_train)
     y_pred = extra_random_forest.predict(X_test)
 
     return extra_random_forest, y_test, y_pred
