@@ -11,6 +11,7 @@ The dataset used in this project is the [Airbnb New York City Airbnb Open Data d
 
 ### Installation
 To run this code, you need to have Python 3 and the following Python libraries installed:
+
 - pandas
 - numpy
 - matplotlib

@@ -1,6 +1,5 @@
 '''
 A python file containing helpers functions for data preprocessing and model evaluation.
-Author: Marie Bouvard
 '''
 import numpy as np
 import pandas as pd
@@ -67,8 +66,8 @@ def splits(X,y, test_size=0.2, y_preproc=False):
     #if required: normalize y 
     if y_preproc==True:
         scaler_y = MinMaxScaler()
-        y_train = scaler_y.fit_transform(y_train)
-        y_test = scaler_y.fit_transform(y_test)
+        y_train = scaler_y.fit_transform(np.array(y_train).reshape(-1, 1))
+        y_test = scaler_y.fit_transform(np.array(y_test).reshape(-1, 1))
 
     return X_train, X_test, y_train, y_test
 
