@@ -76,6 +76,8 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+CART/**/*.ipynb
+!CART/**/cart_test.ipynb
 
 # IPython
 profile_default/
@@ -127,3 +129,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Images
+.png
+
+# MacOS Files
+.DS_Store
