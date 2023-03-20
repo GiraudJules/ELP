@@ -73,7 +73,7 @@ def hist_plot_graph(model_name, y_test, y_pred):
 
 #BAR PLOT FOR ERRORS FUNCTION
 def bar_plot_error_graph(model, model_name, y_test, y_pred):
-        '''
+    '''
     The purpose of the function is to make a bar plot to compare the ground truth y values and the predicted y values for 20 observations.
     This function uses graph_objects (may not be visible on some notebooks)
     Input:
