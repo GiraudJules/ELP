@@ -37,4 +37,32 @@ The code consists of the following files:
 
 ## *Project 2: Decision Tree implementation*
 
-TO COMPLETE
+### Dataset
+The dataset used in this project is the [Iris](https://scikit-learn.org/stable/datasets/toy_dataset.html#iris-plants-dataset) for classification task and [Diabetes](https://www4.stat.ncsu.edu/~boos/var.select/diabetes.html) for regression task, both of the datasets come from scikit-learn standard datasets.
+
+### Installation
+To run this code, you need to have Python 3 and the following Python libraries installed:
+
+- pandas
+- numpy
+- scikit-learn
+
+To install these libraries, you can use pip by running:
+
+`pip install pandas numpy scikit-learn`
+
+### Usage
+You can run the code by opening the Jupyter Notebook `cart_test.ipynb` and executing the cells. The notebooks allow you to test our regression and classification implementation. To do so, the notebooks use the different helper methods present in the Python (.py) files.
+
+The code consists of the following files:
+
+- The `CART` folder, containing `src` folder with `classes` folder inside. 
+- Inside `classes` folder, you can find `base_tree.py` and `node.py`.
+- Inside `classes` folder, you can find `classification_tree.py` and `regression_tree.py`
+- There is also a notebook called `cart_test.ipynb`.
+
+## Contributing
+Contributions to the codebase are welcome. If you find any issues or have ideas for improvement, feel free to open an issue or pull request.
+
+## Badges
+![linting: pylint](https://github.com/GiraudJules/ELP/actions/workflows/pylint.yml/badge.svg)
