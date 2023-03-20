@@ -1,6 +1,5 @@
 '''
 A python file containing helpers functions for data preprocessing and model evaluation.
-Author: Marie Bouvard
 '''
 import numpy as np
 import pandas as pd
